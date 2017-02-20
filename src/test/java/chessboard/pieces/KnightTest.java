@@ -7,8 +7,8 @@ package chessboard.pieces;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.Direction;
-import java.awt.Point;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -27,13 +27,14 @@ public class KnightTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testKnight.validMoves(fakeBoard);
+        List<GenericMove> moves = testKnight.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 int deltaX = Math.abs(col - testInitialX);
                 int deltaY = Math.abs(row - testInitialY);
+                GenericMove testMove = MoveFactory.create(fakeBoard, testKnight, col, row);
                 if ((deltaX != 2 || deltaY != 1) && (deltaX != 1 || deltaY != 2)) {
-                    assertFalse(moves.contains(new Point(col, row)));
+                    assertFalse(moves.contains(testMove));
                 }
             }
         }
@@ -48,13 +49,14 @@ public class KnightTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testKnight.validMoves(fakeBoard);
+        List<GenericMove> moves = testKnight.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 int deltaX = Math.abs(col - testInitialX);
                 int deltaY = Math.abs(row - testInitialY);
+                GenericMove testMove = MoveFactory.create(fakeBoard, testKnight, col, row);
                 if ((deltaX == 2 && deltaY == 1) || (deltaX == 1 && deltaY == 2)) {
-                    assertTrue(moves.contains(new Point(col, row)));
+                    assertTrue(moves.contains(testMove));
                 }
             }
         }
@@ -64,7 +66,7 @@ public class KnightTest {
     public void validModes_preventsCollisionWithNonEnemies() {
         int testInitialX = 5;
         int testInitialY = 6;
-        King testKing = new King(Color.WHITE, testInitialX, testInitialY);
+        Knight testKnight = new Knight(Color.WHITE, testInitialX, testInitialY);
         int blockerX = testInitialX + 2;
         int blockerY = testInitialY + 1;
         Piece testBlocker = new FakePiece(Color.WHITE, blockerX, blockerY);
@@ -73,7 +75,8 @@ public class KnightTest {
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
         when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
 
-        List<Point> moves = testKing.validMoves(fakeBoard);
-        assertFalse(moves.contains(new Point(blockerX, blockerY)));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testKnight, blockerX, blockerY);
+        List<GenericMove> moves = testKnight.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
     }
 }

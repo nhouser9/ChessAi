@@ -8,7 +8,8 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,30 +44,34 @@ public class Pawn extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List<Point> validMoves(Board board) {
+    public List<GenericMove> validMoves(Board board) {
         //set up variables
-        List<Point> toReturn = new ArrayList<>();
-        Point target;
+        List<GenericMove> toReturn = new ArrayList<>();
+        int addX;
+        int addY;
 
         //add normal move
-        target = new Point(position().x, position().y + color.forwardDirection().y());
-        addIfValid(toReturn, board, target, true, false);
+        addX = position().x;
+        addY = position().y + color.forwardDirection().y();
+        MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
 
         //add capture move
         for (Direction diagonal : color.forwardDiagonals()) {
-            target = new Point(position().x + diagonal.x(), position().y + diagonal.y());
-            addIfValid(toReturn, board, target, false, true);
+            addX = position().x + diagonal.x();
+            addY = position().y + diagonal.y();
+            MoveFactory.addIfValid(toReturn, board, this, addX, addY, true, false);
         }
 
         //add double move
-        target = new Point(position().x, position().y + (2 * color.forwardDirection().y()));
         Piece blocker = board.occupant(position().x, position().y + color.forwardDirection().y());
-        if (position().y == color.pawnRow() && blocker == null) {
-            addIfValid(toReturn, board, target, true, false);
+        if (blocker == null && position().y == color.pawnRow()) {
+            addX = position().x;
+            addY = position().y + (2 * color.forwardDirection().y());
+            MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
         }
 
         //add en passant
-        Move lastMove = board.lastMove();
+        GenericMove lastMove = board.lastMove();
         if (lastMove != null) {
             boolean enemyMoveAllowsEnPassant = true;
             enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && lastMove.piece instanceof Pawn;
@@ -76,8 +81,9 @@ public class Pawn extends Piece {
             enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && lastMove.from.x == lastMove.to.x;
             enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && Math.abs(lastMove.from.y - lastMove.to.y) == 2;
             if (enemyMoveAllowsEnPassant) {
-                target = new Point(lastMove.to.x, position().y + color.forwardDirection().y());
-                addIfValid(toReturn, board, target, true, false);
+                addX = lastMove.to.x;
+                addY = position().y + color.forwardDirection().y();
+                MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
             }
         }
 

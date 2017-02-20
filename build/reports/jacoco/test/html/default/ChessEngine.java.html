@@ -18,6 +18,10 @@
  * finish calculating capture lines?
  * reuse old tree
  * cache
+ * allow user to promote into a rook
+ * enforce consistency between board / piece position
+ * king should have own property of king threatened
+ * endangers king should be part of is valid
  */
 import gui.AppWindow;
 import javafx.application.Application;
@@ -26,13 +30,13 @@ import javafx.application.Application;
  *
  * @author Nick Houser
  */
-<span class="nc" id="L29">public class ChessEngine {</span>
+<span class="nc" id="L33">public class ChessEngine {</span>
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-<span class="nc" id="L35">        Application.launch(AppWindow.class, new String[0]);</span>
-<span class="nc" id="L36">    }</span>
+<span class="nc" id="L39">        Application.launch(AppWindow.class, new String[0]);</span>
+<span class="nc" id="L40">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

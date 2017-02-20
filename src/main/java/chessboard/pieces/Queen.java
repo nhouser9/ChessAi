@@ -8,6 +8,7 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
+import chessboard.moves.GenericMove;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,8 @@ public class Queen extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List<Point> validMoves(Board board) {
-        List<Point> toReturn = new ArrayList<>();
+    public List<GenericMove> validMoves(Board board) {
+        List<GenericMove> toReturn = new ArrayList<>();
 
         for (Direction dir : Direction.values()) {
             addDirectionalMoves(toReturn, board, dir);

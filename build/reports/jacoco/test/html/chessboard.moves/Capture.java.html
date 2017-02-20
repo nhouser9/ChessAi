@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Capture.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ChessAI</a> &gt; <a href="index.source.html" class="el_package">chessboard.moves</a> &gt; <span class="el_source">Capture.java</span></div><h1>Capture.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package chessboard.moves;
+
+import chessboard.Board;
+import chessboard.pieces.Piece;
+import java.awt.Point;
+
+/**
+ * Class representing a capture, which is a move where a piece moves onto
+ * another piece and removes it from the board.
+ *
+ * @author Nick Houser
+ */
+public class Capture extends GenericMove {
+
+    //the enemy pawn that will be captured
+    public final Piece captured;
+
+    /**
+     * Constructor which calls the inherited constructor.
+     *
+     * @param board the game board on which the move will be made
+     * @param mover the Piece undertaking the move
+     * @param targetPosition the Point the mover is moving to
+     */
+    protected Capture(Board board, Piece mover, Point targetPosition) {
+<span class="fc" id="L31">        super(board, mover, targetPosition);</span>
+<span class="fc" id="L32">        captured = board.occupant(to.x, to.y);</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * The non-generic component of a promotion. Does not need to do anything as
+     * the captured piece will be cleaned up by the generic execution.
+     */
+    @Override
+    protected void implementationExecute() {
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * The non-generic component of a promotion reversion. Does not need to do
+     * anything as the promoted piece will be cleaned up by the generic
+     * reversion.
+     */
+    @Override
+    protected void implementationRevert() {
+<span class="fc" id="L50">        board.setOccupant(captured.position().x, captured.position().y, captured);</span>
+<span class="fc" id="L51">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

@@ -8,9 +8,9 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.awt.Point;
-import java.util.LinkedList;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -30,8 +30,9 @@ public class PawnTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertTrue(moves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, target.x, target.y);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertTrue(moves.contains(testMove));
     }
 
     @Test
@@ -44,8 +45,9 @@ public class PawnTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertTrue(moves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, target.x, target.y);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertTrue(moves.contains(testMove));
     }
 
     @Test
@@ -61,8 +63,9 @@ public class PawnTest {
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
         when(fakeBoard.occupant(initialX, initialY + moveDir.y())).thenReturn(blocker);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertFalse(moves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, target.x, target.y);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
     }
 
     @Test
@@ -75,8 +78,9 @@ public class PawnTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertFalse(moves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, target.x, target.y);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
     }
 
     @Test
@@ -88,10 +92,12 @@ public class PawnTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
         for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-            assertFalse(moves.contains(new Point(initialX + 1, row)));
-            assertFalse(moves.contains(new Point(initialX - 1, row)));
+            GenericMove testMove1 = MoveFactory.create(fakeBoard, testPawn, initialX + 1, row);
+            GenericMove testMove2 = MoveFactory.create(fakeBoard, testPawn, initialX - 1, row);
+            assertFalse(moves.contains(testMove1));
+            assertFalse(moves.contains(testMove2));
         }
     }
 
@@ -102,8 +108,8 @@ public class PawnTest {
         Pawn testPawn = new Pawn(Color.WHITE, initialX, initialY);
 
         int enemyEastX = initialX + Direction.NORTHEAST.x();
-        int enemyEasyY = initialY + Direction.NORTHEAST.y();
-        Piece enemyEast = new FakePiece(Color.BLACK, enemyEastX, enemyEasyY);
+        int enemyEastY = initialY + Direction.NORTHEAST.y();
+        Piece enemyEast = new FakePiece(Color.BLACK, enemyEastX, enemyEastY);
 
         int enemyWestX = initialX + Direction.NORTHWEST.x();
         int enemyWestY = initialY + Direction.NORTHWEST.y();
@@ -111,12 +117,14 @@ public class PawnTest {
 
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
-        when(fakeBoard.occupant(enemyEastX, enemyEasyY)).thenReturn(enemyEast);
+        when(fakeBoard.occupant(enemyEastX, enemyEastY)).thenReturn(enemyEast);
         when(fakeBoard.occupant(enemyWestX, enemyWestY)).thenReturn(enemyWest);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertTrue(moves.contains(new Point(enemyEastX, enemyEasyY)));
-        assertTrue(moves.contains(new Point(enemyWestX, enemyWestY)));
+        GenericMove testMove1 = MoveFactory.create(fakeBoard, testPawn, enemyEastX, enemyEastY);
+        GenericMove testMove2 = MoveFactory.create(fakeBoard, testPawn, enemyEastX, enemyEastY);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertTrue(moves.contains(testMove1));
+        assertTrue(moves.contains(testMove2));
     }
 
     @Test
@@ -132,10 +140,12 @@ public class PawnTest {
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
         when(fakeBoard.occupant(enemyX, enemyY)).thenReturn(enemy);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
         for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-            assertFalse(moves.contains(new Point(initialX + 1, row)));
-            assertFalse(moves.contains(new Point(initialX - 1, row)));
+            GenericMove testMove1 = MoveFactory.create(fakeBoard, testPawn, initialX + 1, row);
+            GenericMove testMove2 = MoveFactory.create(fakeBoard, testPawn, initialX - 1, row);
+            assertFalse(moves.contains(testMove1));
+            assertFalse(moves.contains(testMove2));
         }
     }
 
@@ -148,8 +158,9 @@ public class PawnTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertTrue(moves.contains(new Point(initialX, initialY + (2 * Direction.NORTH.y()))));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, initialX, initialY + (2 * Direction.NORTH.y()));
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertTrue(moves.contains(testMove));
     }
 
     @Test
@@ -157,12 +168,14 @@ public class PawnTest {
         int initialX = 4;
         int initialY = Board.SQUARES_PER_SIDE - 3;
         Pawn testPawn = new Pawn(Color.WHITE, initialX, initialY);
+        Point target = new Point(initialX, initialY + (2 * Direction.NORTH.y()));
 
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertFalse(moves.contains(new Point(initialX, initialY + (2 * Direction.NORTH.y()))));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, target.x, target.y);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
     }
 
     @Test
@@ -182,12 +195,13 @@ public class PawnTest {
 
         Board fakeBoard = mock(Board.class);
         Point captureMoveTo = new Point(2, 4);
-        Move fakeHistory = new Move(fakeBoard, testCapture, captureMoveTo);
+        GenericMove fakeHistory = MoveFactory.create(fakeBoard, testCapture, captureMoveTo.x, captureMoveTo.y);
         testCapture.setPosition(captureMoveTo);
         when(fakeBoard.lastMove()).thenReturn(fakeHistory);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertTrue(moves.contains(new Point(2, 5)));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, 2, 5);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertTrue(moves.contains(testMove));
     }
 
     @Test
@@ -197,12 +211,13 @@ public class PawnTest {
 
         Board fakeBoard = mock(Board.class);
         Point captureMoveTo = new Point(2, 4);
-        Move fakeHistory = new Move(fakeBoard, testCapture, captureMoveTo);
+        GenericMove fakeHistory = MoveFactory.create(fakeBoard, testCapture, captureMoveTo.x, captureMoveTo.y);
         testCapture.setPosition(captureMoveTo);
         when(fakeBoard.lastMove()).thenReturn(fakeHistory);
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertFalse(moves.contains(new Point(2, 5)));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, 2, 5);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
     }
 
     @Test
@@ -210,12 +225,14 @@ public class PawnTest {
         int initialX = 6;
         int initialY = Board.SQUARES_PER_SIDE - 2;
         Pawn testPawn = new Pawn(Color.WHITE, initialX, initialY);
+        Point target = new Point(initialX, initialY + (2 * Direction.NORTH.y()));
 
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
         when(fakeBoard.occupant(initialX, initialY - 1)).thenReturn(mock(Piece.class));
 
-        List<Point> moves = testPawn.validMoves(fakeBoard);
-        assertFalse(moves.contains(new Point(initialX, initialY + (2 * Direction.NORTH.y()))));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, target.x, target.y);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
     }
 }

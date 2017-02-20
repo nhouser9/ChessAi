@@ -7,7 +7,7 @@ package ai;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
 import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
@@ -59,8 +59,8 @@ public class PositionAnalysis {
         if (!toAnalyze.kingThreatened(activeKing)) {
             return 0;
         }
-        for (Point kingMove : activeKing.validMoves(toAnalyze)) {
-            if (!toAnalyze.moveSacksKing(new Move(toAnalyze, activeKing, kingMove))) {
+        for (GenericMove kingMove : activeKing.validMoves(toAnalyze)) {
+            if (!kingMove.endangersKing()) {
                 return 0;
             }
         }

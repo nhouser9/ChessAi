@@ -7,7 +7,7 @@ package ai;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,8 +24,6 @@ public class MoveSelector {
     //the root of the tree
     private AnalysisNode rootNode;
 
-    //the depth of the tree
-    //private int depth;
     /**
      * Constructor which builds the full tree to the specified move depth.
      *
@@ -33,9 +31,8 @@ public class MoveSelector {
      * @param depth the number of moves ahead to analyze
      */
     public MoveSelector(Board toAnalyze, int depth) {
-        Board analysisCopy = toAnalyze.copyOf();
-        rootNode = new AnalysisNode(analysisCopy, null);
-        addChildren(analysisCopy, rootNode, 0, depth);
+        rootNode = new AnalysisNode(toAnalyze, null);
+        addChildren(toAnalyze, rootNode, 0, depth);
         calculateWorstCaseValues();
     }
 
@@ -53,14 +50,14 @@ public class MoveSelector {
             return;
         }
 
-        for (Move possible : analysisCopy.validMoves()) {
-            analysisCopy.move(possible);
+        for (GenericMove possible : analysisCopy.validMoves()) {
+            possible.execute();
 
             AnalysisNode child = new AnalysisNode(analysisCopy, possible);
             node.addChild(child);
             addChildren(analysisCopy, child, currentDepth + 1, targetDepth);
 
-            analysisCopy.revertMove();
+            possible.revert();
         }
     }
 
@@ -69,7 +66,7 @@ public class MoveSelector {
      *
      * @return the best possible next move
      */
-    public Move bestMove() {
+    public GenericMove bestMove() {
         for (AnalysisNode child : rootNode.children()) {
             if (child.worstCaseValue().equals(rootNode.worstCaseValue())) {
                 return child.moveToReach;

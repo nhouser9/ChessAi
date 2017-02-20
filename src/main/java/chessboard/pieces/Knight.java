@@ -7,6 +7,8 @@ package chessboard.pieces;
 
 import chessboard.Board;
 import chessboard.Color;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,33 +40,18 @@ public class Knight extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List<Point> validMoves(Board board) {
-        List<Point> toReturn = new ArrayList<>();
+    public List<GenericMove> validMoves(Board board) {
+        List<GenericMove> toReturn = new ArrayList<>();
         Point target;
 
-        target = new Point(position().x + 2, position().y + 1);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x + -2, position().y + 1);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x + 2, position().y - 1);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x - 2, position().y - 1);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x + 1, position().y + 2);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x - 1, position().y + 2);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x + 1, position().y - 2);
-        addIfValid(toReturn, board, target, true, true);
-
-        target = new Point(position().x - 1, position().y - 2);
-        addIfValid(toReturn, board, target, true, true);
+        int[] ones = {-1, 1};
+        int[] twos = {-2, 2};
+        for (int one : ones) {
+            for (int two : twos) {
+                MoveFactory.addIfValid(toReturn, board, this, position().x + one, position().y + two, true, true);
+                MoveFactory.addIfValid(toReturn, board, this, position().x + two, position().y + one, true, true);
+            }
+        }
 
         return toReturn;
     }

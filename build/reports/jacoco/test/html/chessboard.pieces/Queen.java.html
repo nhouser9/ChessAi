@@ -8,6 +8,7 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
+import chessboard.moves.GenericMove;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class Queen extends Piece {
      * @param yPosition the initial y position
      */
     public Queen(Color color, int xPosition, int yPosition) {
-<span class="fc" id="L31">        super(color, xPosition, yPosition);</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L32">        super(color, xPosition, yPosition);</span>
+<span class="fc" id="L33">    }</span>
 
     /**
      * Method which returns a list of valid moves for the Queen. Queens can move
@@ -39,14 +40,14 @@ public class Queen extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List&lt;Point&gt; validMoves(Board board) {
-<span class="fc" id="L43">        List&lt;Point&gt; toReturn = new ArrayList&lt;&gt;();</span>
+    public List&lt;GenericMove&gt; validMoves(Board board) {
+<span class="fc" id="L44">        List&lt;GenericMove&gt; toReturn = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (Direction dir : Direction.values()) {</span>
-<span class="fc" id="L46">            addDirectionalMoves(toReturn, board, dir);</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (Direction dir : Direction.values()) {</span>
+<span class="fc" id="L47">            addDirectionalMoves(toReturn, board, dir);</span>
         }
 
-<span class="fc" id="L49">        return toReturn;</span>
+<span class="fc" id="L50">        return toReturn;</span>
     }
 
 }

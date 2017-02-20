@@ -10,6 +10,8 @@ import chessboard.Color;
 import chessboard.Direction;
 import java.awt.Point;
 import java.util.ArrayList;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.util.List;
 
 /**
@@ -28,8 +30,8 @@ public class King extends Piece {
      * @param yPosition the initial y position
      */
     public King(Color color, int xPosition, int yPosition) {
-<span class="fc" id="L31">        super(color, xPosition, yPosition);</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L33">        super(color, xPosition, yPosition);</span>
+<span class="fc" id="L34">    }</span>
 
     /**
      * Method which returns a list of valid moves for the King. Kings can move
@@ -39,20 +41,24 @@ public class King extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List&lt;Point&gt; validMoves(Board board) {
-<span class="fc" id="L43">        List&lt;Point&gt; toReturn = new ArrayList&lt;&gt;();</span>
+    public List&lt;GenericMove&gt; validMoves(Board board) {
+<span class="fc" id="L45">        List&lt;GenericMove&gt; toReturn = new ArrayList&lt;&gt;();</span>
+        int addX;
+        int addY;
 
-<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (Direction dir : Direction.values()) {</span>
-<span class="fc" id="L46">            Point adjacent = new Point(position().x + dir.x(), position().y + dir.y());</span>
-<span class="fc" id="L47">            addIfValid(toReturn, board, adjacent, true, true);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        for (Direction dir : Direction.values()) {</span>
+<span class="fc" id="L50">            addX = position().x + dir.x();</span>
+<span class="fc" id="L51">            addY = position().y + dir.y();</span>
+<span class="fc" id="L52">            MoveFactory.addIfValid(toReturn, board, this, addX, addY, true, true);</span>
 
-<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (board.canCastle(dir, color)) {</span>
-<span class="fc" id="L50">                Point castleTarget = new Point(position().x + (2 * dir.x()), position().y);</span>
-<span class="fc" id="L51">                addIfValid(toReturn, board, castleTarget, true, false);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            if (board.canCastle(dir, color)) {</span>
+<span class="fc" id="L55">                addX = position().x + (2 * dir.x());</span>
+<span class="fc" id="L56">                addY = position().y;</span>
+<span class="fc" id="L57">                MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);</span>
             }
         }
 
-<span class="fc" id="L55">        return toReturn;</span>
+<span class="fc" id="L61">        return toReturn;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

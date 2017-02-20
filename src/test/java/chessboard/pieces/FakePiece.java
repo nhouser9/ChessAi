@@ -7,7 +7,7 @@ package chessboard.pieces;
 
 import chessboard.Board;
 import chessboard.Color;
-import java.awt.Point;
+import chessboard.moves.GenericMove;
 import java.util.List;
 
 /**
@@ -20,7 +20,7 @@ public class FakePiece extends Piece {
     }
 
     @Override
-    public List<Point> validMoves(Board board) {
+    public List<GenericMove> validMoves(Board board) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

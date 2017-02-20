@@ -8,6 +8,8 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ public class PieceTest {
 
     @Test
     public void addDirectionalMoves_addsAllMovesInPassedDirection_whenNoBlockersExist() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
         Piece testPiece = new FakePiece(Color.BLACK, initialCol, initialRow);
@@ -50,7 +52,8 @@ public class PieceTest {
             int col = initialCol + dir.x();
             int row = initialRow + dir.y();
             while (Board.inBounds(col, row)) {
-                assertTrue(potentialMoves.contains(new Point(col, row)));
+                GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, col, row);
+                assertTrue(potentialMoves.contains(testMove));
                 col = col + dir.x();
                 row = row + dir.y();
             }
@@ -59,7 +62,7 @@ public class PieceTest {
 
     @Test
     public void addDirectionalMoves_doesNotAddCurrentLocation() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
         Piece testPiece = new FakePiece(Color.BLACK, initialCol, initialRow);
@@ -69,12 +72,13 @@ public class PieceTest {
         potentialMoves.clear();
         testPiece.addDirectionalMoves(potentialMoves, fakeBoard, Direction.NORTH);
 
-        assertFalse(potentialMoves.contains(new Point(initialCol, initialRow)));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, initialCol, initialRow);
+        assertFalse(potentialMoves.contains(testMove));
     }
 
     @Test
     public void addDirectionalMoves_doesNotAddMovesPastBlocker_whenOneExists() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
         int blockerOffset = 2;
@@ -93,14 +97,16 @@ public class PieceTest {
             int col = initialCol + dir.x();
             int row = initialRow + dir.y();
             for (int squaresAway = 1; squaresAway < blockerOffset; squaresAway++) {
-                assertTrue(potentialMoves.contains(new Point(col, row)));
+                GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, col, row);
+                assertTrue(potentialMoves.contains(testMove));
                 col = col + dir.x();
                 row = row + dir.y();
             }
             col = col + dir.x();
             row = row + dir.y();
             while (Board.inBounds(col, row)) {
-                assertFalse(potentialMoves.contains(new Point(col, row)));
+                GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, col, row);
+                assertFalse(potentialMoves.contains(testMove));
                 col = col + dir.x();
                 row = row + dir.y();
             }
@@ -109,7 +115,7 @@ public class PieceTest {
 
     @Test
     public void addDirectionalMoves_allowsCollision_whenBlockerIsEnemy() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
         int blockerOffset = 2;
@@ -125,13 +131,14 @@ public class PieceTest {
             when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
             testPiece.addDirectionalMoves(potentialMoves, fakeBoard, dir);
 
-            assertTrue(potentialMoves.contains(new Point(blockerX, blockerY)));
+            GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, blockerX, blockerY);
+            assertTrue(potentialMoves.contains(testMove));
         }
     }
 
     @Test
     public void addDirectionalMoves_preventsCollision_whenBlockerIsNotEnemy() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
         int blockerOffset = 2;
@@ -147,76 +154,83 @@ public class PieceTest {
             when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
             testPiece.addDirectionalMoves(potentialMoves, fakeBoard, dir);
 
-            assertFalse(potentialMoves.contains(new Point(blockerX, blockerY)));
+            GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, blockerX, blockerY);
+            assertFalse(potentialMoves.contains(testMove));
         }
     }
 
     @Test
     public void addIfValid_doesNotAdd_whenTargetOutOfBounds() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
         Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE, 0);
-        testPiece.addIfValid(potentialMoves, fakeBoard, target, true, true);
-        assertFalse(potentialMoves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
+        MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, true, true);
+        assertFalse(potentialMoves.contains(testMove));
     }
 
     @Test
     public void addIfValid_doesNotAdd_whenTargetOccupiedByFriend() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
         Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE, 0);
         Piece blocker = new FakePiece(Color.BLACK, target.x, target.y);
         when(fakeBoard.occupant(target.x, target.y)).thenReturn(blocker);
-        testPiece.addIfValid(potentialMoves, fakeBoard, target, true, true);
-        assertFalse(potentialMoves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
+        MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, true, true);
+        assertFalse(potentialMoves.contains(testMove));
     }
 
     @Test
     public void addIfValid_addsEmptyTarget_whenPassedEmptyFlag() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
         Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE - 1, 0);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
-        testPiece.addIfValid(potentialMoves, fakeBoard, target, true, false);
-        assertTrue(potentialMoves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
+        MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, false, true);
+        assertTrue(potentialMoves.contains(testMove));
     }
 
     @Test
     public void addIfValid_doesNotAddEmptyTarget_whenNotPassedEmptyFlag() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
         Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE - 1, 0);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
-        testPiece.addIfValid(potentialMoves, fakeBoard, target, false, false);
-        assertFalse(potentialMoves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
+        MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, false, false);
+        assertFalse(potentialMoves.contains(testMove));
     }
 
     @Test
     public void addIfValid_addsEnemyTarget_whenPassedEnemyFlag() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
         Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
         Point target = new Point(0, 0);
         Piece testEnemy = new FakePiece(Color.WHITE, target.x, target.y);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(testEnemy);
-        testPiece.addIfValid(potentialMoves, fakeBoard, target, false, true);
-        assertTrue(potentialMoves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
+        MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, true, false);
+        assertTrue(potentialMoves.contains(testMove));
     }
 
     @Test
     public void addIfValid_doesNotAddEnemyTarget_whenNotPassedEnemyFlag() {
-        List<Point> potentialMoves = new ArrayList<>();
+        List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
         Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
         Point target = new Point(0, 0);
         Piece testEnemy = new FakePiece(Color.WHITE, target.x, target.y);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(testEnemy);
-        testPiece.addIfValid(potentialMoves, fakeBoard, target, false, false);
-        assertFalse(potentialMoves.contains(target));
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
+        MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, false, false);
+        assertFalse(potentialMoves.contains(testMove));
     }
 
     @Test

@@ -8,6 +8,7 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
+import chessboard.moves.GenericMove;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class Rook extends Piece {
      * @param yPosition the initial y position
      */
     public Rook(Color color, int xPosition, int yPosition) {
-<span class="fc" id="L31">        super(color, xPosition, yPosition);</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L32">        super(color, xPosition, yPosition);</span>
+<span class="fc" id="L33">    }</span>
 
     /**
      * Method which returns a list of valid moves for the Rook. Rooks can move
@@ -39,15 +40,15 @@ public class Rook extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List&lt;Point&gt; validMoves(Board board) {
-<span class="fc" id="L43">        List&lt;Point&gt; toReturn = new ArrayList&lt;&gt;();</span>
+    public List&lt;GenericMove&gt; validMoves(Board board) {
+<span class="fc" id="L44">        List&lt;GenericMove&gt; toReturn = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L45">        addDirectionalMoves(toReturn, board, Direction.NORTH);</span>
-<span class="fc" id="L46">        addDirectionalMoves(toReturn, board, Direction.SOUTH);</span>
-<span class="fc" id="L47">        addDirectionalMoves(toReturn, board, Direction.EAST);</span>
-<span class="fc" id="L48">        addDirectionalMoves(toReturn, board, Direction.WEST);</span>
+<span class="fc" id="L46">        addDirectionalMoves(toReturn, board, Direction.NORTH);</span>
+<span class="fc" id="L47">        addDirectionalMoves(toReturn, board, Direction.SOUTH);</span>
+<span class="fc" id="L48">        addDirectionalMoves(toReturn, board, Direction.EAST);</span>
+<span class="fc" id="L49">        addDirectionalMoves(toReturn, board, Direction.WEST);</span>
 
-<span class="fc" id="L50">        return toReturn;</span>
+<span class="fc" id="L51">        return toReturn;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

@@ -7,7 +7,8 @@ package chessboard.pieces;
 
 import chessboard.Board;
 import chessboard.Color;
-import java.awt.Point;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,14 +27,16 @@ public class RookTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testRook.validMoves(fakeBoard);
+        List<GenericMove> moves = testRook.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 if (col != testInitialX && row != testInitialY) {
-                    assertFalse(moves.contains(new Point(col, row)));
+                    GenericMove testMove = MoveFactory.create(fakeBoard, testRook, col, row);
+                    assertFalse(moves.contains(testMove));
                 }
                 if (col == testInitialX && row == testInitialY) {
-                    assertFalse(moves.contains(new Point(col, row)));
+                    GenericMove testMove = MoveFactory.create(fakeBoard, testRook, col, row);
+                    assertFalse(moves.contains(testMove));
                 }
             }
         }
@@ -48,14 +51,15 @@ public class RookTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testRook.validMoves(fakeBoard);
+        List<GenericMove> moves = testRook.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 if (col == testInitialX || row == testInitialY) {
                     if (col == testInitialX && row == testInitialY) {
                         continue;
                     }
-                    assertTrue(moves.contains(new Point(col, row)));
+                    GenericMove testMove = MoveFactory.create(fakeBoard, testRook, col, row);
+                    assertTrue(moves.contains(testMove));
                 }
             }
         }

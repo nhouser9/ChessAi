@@ -7,7 +7,7 @@ package ai;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,20 +24,17 @@ public class MoveSelector {
     //the root of the tree
     private AnalysisNode rootNode;
 
-    //the depth of the tree
-    //private int depth;
     /**
      * Constructor which builds the full tree to the specified move depth.
      *
      * @param toAnalyze the board to analyze
      * @param depth the number of moves ahead to analyze
      */
-<span class="fc" id="L35">    public MoveSelector(Board toAnalyze, int depth) {</span>
-<span class="fc" id="L36">        Board analysisCopy = toAnalyze.copyOf();</span>
-<span class="fc" id="L37">        rootNode = new AnalysisNode(analysisCopy, null);</span>
-<span class="fc" id="L38">        addChildren(analysisCopy, rootNode, 0, depth);</span>
-<span class="fc" id="L39">        calculateWorstCaseValues();</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L33">    public MoveSelector(Board toAnalyze, int depth) {</span>
+<span class="fc" id="L34">        rootNode = new AnalysisNode(toAnalyze, null);</span>
+<span class="fc" id="L35">        addChildren(toAnalyze, rootNode, 0, depth);</span>
+<span class="fc" id="L36">        calculateWorstCaseValues();</span>
+<span class="fc" id="L37">    }</span>
 
     /**
      * Recursive method which adds all children at the current level, and
@@ -49,33 +46,33 @@ public class MoveSelector {
      * @param targetDepth the target number of moves away from starting state
      */
     private void addChildren(Board analysisCopy, AnalysisNode node, int currentDepth, int targetDepth) {
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (currentDepth == targetDepth) {</span>
-<span class="fc" id="L53">            return;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (currentDepth == targetDepth) {</span>
+<span class="fc" id="L50">            return;</span>
         }
 
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (Move possible : analysisCopy.validMoves()) {</span>
-<span class="fc" id="L57">            analysisCopy.move(possible);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for (GenericMove possible : analysisCopy.validMoves()) {</span>
+<span class="fc" id="L54">            possible.execute();</span>
 
-<span class="fc" id="L59">            AnalysisNode child = new AnalysisNode(analysisCopy, possible);</span>
-<span class="fc" id="L60">            node.addChild(child);</span>
-<span class="fc" id="L61">            addChildren(analysisCopy, child, currentDepth + 1, targetDepth);</span>
+<span class="fc" id="L56">            AnalysisNode child = new AnalysisNode(analysisCopy, possible);</span>
+<span class="fc" id="L57">            node.addChild(child);</span>
+<span class="fc" id="L58">            addChildren(analysisCopy, child, currentDepth + 1, targetDepth);</span>
 
-<span class="fc" id="L63">            analysisCopy.revertMove();</span>
-<span class="fc" id="L64">        }</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L60">            possible.revert();</span>
+<span class="fc" id="L61">        }</span>
+<span class="fc" id="L62">    }</span>
 
     /**
      * Method which returns the best possible next move.
      *
      * @return the best possible next move
      */
-    public Move bestMove() {
-<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (AnalysisNode child : rootNode.children()) {</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (child.worstCaseValue().equals(rootNode.worstCaseValue())) {</span>
-<span class="fc" id="L75">                return child.moveToReach;</span>
+    public GenericMove bestMove() {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for (AnalysisNode child : rootNode.children()) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            if (child.worstCaseValue().equals(rootNode.worstCaseValue())) {</span>
+<span class="fc" id="L72">                return child.moveToReach;</span>
             }
-<span class="fc" id="L77">        }</span>
-<span class="fc" id="L78">        return null;</span>
+<span class="fc" id="L74">        }</span>
+<span class="fc" id="L75">        return null;</span>
     }
 
     /**
@@ -84,24 +81,24 @@ public class MoveSelector {
      * makes the best possible response.
      */
     private void calculateWorstCaseValues() {
-<span class="fc" id="L87">        Collection&lt;AnalysisNode&gt; toPushUp = leaves();</span>
-<span class="fc" id="L88">        Collection&lt;AnalysisNode&gt; parents = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L84">        Collection&lt;AnalysisNode&gt; toPushUp = leaves();</span>
+<span class="fc" id="L85">        Collection&lt;AnalysisNode&gt; parents = new HashSet&lt;&gt;();</span>
 
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        for (AnalysisNode leaf : toPushUp) {</span>
-<span class="fc" id="L91">            leaf.setWorstCaseValue(leaf.value);</span>
-<span class="fc" id="L92">        }</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for (AnalysisNode leaf : toPushUp) {</span>
+<span class="fc" id="L88">            leaf.setWorstCaseValue(leaf.value);</span>
+<span class="fc" id="L89">        }</span>
 
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        while (!toPushUp.isEmpty()) {</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            for (AnalysisNode node : toPushUp) {</span>
-<span class="fc" id="L96">                pushUpWorstCase(node);</span>
-<span class="fc bfc" id="L97" title="All 4 branches covered.">                if (node.parent() != null &amp;&amp; !parents.contains(node.parent())) {</span>
-<span class="fc" id="L98">                    parents.add(node.parent());</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        while (!toPushUp.isEmpty()) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            for (AnalysisNode node : toPushUp) {</span>
+<span class="fc" id="L93">                pushUpWorstCase(node);</span>
+<span class="fc bfc" id="L94" title="All 4 branches covered.">                if (node.parent() != null &amp;&amp; !parents.contains(node.parent())) {</span>
+<span class="fc" id="L95">                    parents.add(node.parent());</span>
                 }
-<span class="fc" id="L100">            }</span>
-<span class="fc" id="L101">            toPushUp = parents;</span>
-<span class="fc" id="L102">            parents = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L97">            }</span>
+<span class="fc" id="L98">            toPushUp = parents;</span>
+<span class="fc" id="L99">            parents = new HashSet&lt;&gt;();</span>
         }
-<span class="fc" id="L104">    }</span>
+<span class="fc" id="L101">    }</span>
 
     /**
      * Method which returns all of the leaves of the current tree.
@@ -109,11 +106,11 @@ public class MoveSelector {
      * @return all leaves of the current tree
      */
     private List&lt;AnalysisNode&gt; leaves() {
-<span class="fc" id="L112">        List&lt;AnalysisNode&gt; leaves = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L109">        List&lt;AnalysisNode&gt; leaves = new LinkedList&lt;&gt;();</span>
 
-<span class="fc" id="L114">        recursiveLeafSearch(leaves, rootNode);</span>
+<span class="fc" id="L111">        recursiveLeafSearch(leaves, rootNode);</span>
 
-<span class="fc" id="L116">        return leaves;</span>
+<span class="fc" id="L113">        return leaves;</span>
     }
 
     /**
@@ -124,14 +121,14 @@ public class MoveSelector {
      * @param current the current node to search
      */
     private void recursiveLeafSearch(List&lt;AnalysisNode&gt; leaves, AnalysisNode current) {
-<span class="fc bfc" id="L127" title="All 2 branches covered.">        if (current.children().isEmpty()) {</span>
-<span class="fc" id="L128">            leaves.add(current);</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (current.children().isEmpty()) {</span>
+<span class="fc" id="L125">            leaves.add(current);</span>
         } else {
-<span class="fc bfc" id="L130" title="All 2 branches covered.">            for (AnalysisNode child : current.children()) {</span>
-<span class="fc" id="L131">                recursiveLeafSearch(leaves, child);</span>
-<span class="fc" id="L132">            }</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            for (AnalysisNode child : current.children()) {</span>
+<span class="fc" id="L128">                recursiveLeafSearch(leaves, child);</span>
+<span class="fc" id="L129">            }</span>
         }
-<span class="fc" id="L134">    }</span>
+<span class="fc" id="L131">    }</span>
 
     /**
      * Method which pushes up the worst case values for each leaf as if the best
@@ -140,18 +137,18 @@ public class MoveSelector {
      * @param leaf the leaf to push up
      */
     private void pushUpWorstCase(AnalysisNode leaf) {
-<span class="fc" id="L143">        AnalysisNode parent = leaf.parent();</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (parent != null) {</span>
-<span class="fc" id="L145">            Double parentWorstCase = parent.worstCaseValue();</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">            if (parentWorstCase == null) {</span>
-<span class="fc" id="L147">                parentWorstCase = leaf.worstCaseValue();</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">            } else if (leaf.moveToReach.piece.color == Color.WHITE) {</span>
-<span class="fc" id="L149">                parentWorstCase = Math.max(parentWorstCase, leaf.worstCaseValue());</span>
+<span class="fc" id="L140">        AnalysisNode parent = leaf.parent();</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (parent != null) {</span>
+<span class="fc" id="L142">            Double parentWorstCase = parent.worstCaseValue();</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            if (parentWorstCase == null) {</span>
+<span class="fc" id="L144">                parentWorstCase = leaf.worstCaseValue();</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">            } else if (leaf.moveToReach.piece.color == Color.WHITE) {</span>
+<span class="fc" id="L146">                parentWorstCase = Math.max(parentWorstCase, leaf.worstCaseValue());</span>
             } else {
-<span class="fc" id="L151">                parentWorstCase = Math.min(parentWorstCase, leaf.worstCaseValue());</span>
+<span class="fc" id="L148">                parentWorstCase = Math.min(parentWorstCase, leaf.worstCaseValue());</span>
             }
-<span class="fc" id="L153">            parent.setWorstCaseValue(parentWorstCase);</span>
+<span class="fc" id="L150">            parent.setWorstCaseValue(parentWorstCase);</span>
         }
-<span class="fc" id="L155">    }</span>
+<span class="fc" id="L152">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

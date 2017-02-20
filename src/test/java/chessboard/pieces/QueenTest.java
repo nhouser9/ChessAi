@@ -7,6 +7,8 @@ package chessboard.pieces;
 
 import chessboard.Board;
 import chessboard.Color;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.awt.Point;
 import java.util.List;
 import org.junit.Test;
@@ -26,16 +28,18 @@ public class QueenTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testQueen.validMoves(fakeBoard);
+        List<GenericMove> moves = testQueen.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 int deltaX = col - testInitialX;
                 int deltaY = row - testInitialY;
                 if (deltaX == 0 && deltaY == 0) {
-                    assertFalse(moves.contains(new Point(col, row)));
+                    GenericMove testMove = MoveFactory.create(fakeBoard, testQueen, col, row);
+                    assertFalse(moves.contains(testMove));
                 }
                 if (Math.abs(deltaX) != Math.abs(deltaY) && col != testInitialX && row != testInitialY) {
-                    assertFalse(moves.contains(new Point(col, row)));
+                    GenericMove testMove = MoveFactory.create(fakeBoard, testQueen, col, row);
+                    assertFalse(moves.contains(testMove));
                 }
             }
         }
@@ -50,7 +54,7 @@ public class QueenTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
 
-        List<Point> moves = testQueen.validMoves(fakeBoard);
+        List<GenericMove> moves = testQueen.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 int deltaX = col - testInitialX;
@@ -59,7 +63,8 @@ public class QueenTest {
                     continue;
                 }
                 if (Math.abs(deltaX) == Math.abs(deltaY) || col == testInitialX || row == testInitialY) {
-                    assertTrue(moves.contains(new Point(col, row)));
+                    GenericMove testMove = MoveFactory.create(fakeBoard, testQueen, col, row);
+                    assertTrue(moves.contains(testMove));
                 }
             }
         }

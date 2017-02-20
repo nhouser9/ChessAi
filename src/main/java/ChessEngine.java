@@ -18,6 +18,10 @@
  * finish calculating capture lines?
  * reuse old tree
  * cache
+ * allow user to promote into a rook
+ * enforce consistency between board / piece position
+ * king should have own property of king threatened
+ * endangers king should be part of is valid
  */
 import gui.AppWindow;
 import javafx.application.Application;

@@ -8,6 +8,10 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
+import chessboard.moves.Capture;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
+import chessboard.moves.NormalMove;
 import java.awt.Point;
 import java.util.List;
 
@@ -35,11 +39,11 @@ public abstract class Piece {
      * @param xPosition the initial x position
      * @param yPosition the initial y position
      */
-<span class="fc" id="L38">    public Piece(Color color, int xPosition, int yPosition) {</span>
-<span class="fc" id="L39">        this.color = color;</span>
-<span class="fc" id="L40">        position = new Point(xPosition, yPosition);</span>
-<span class="fc" id="L41">        moveCount = 0;</span>
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L42">    public Piece(Color color, int xPosition, int yPosition) {</span>
+<span class="fc" id="L43">        this.color = color;</span>
+<span class="fc" id="L44">        position = new Point(xPosition, yPosition);</span>
+<span class="fc" id="L45">        moveCount = 0;</span>
+<span class="fc" id="L46">    }</span>
 
     /**
      * Getter method for position.
@@ -47,7 +51,7 @@ public abstract class Piece {
      * @return the position of the piece
      */
     public Point position() {
-<span class="fc" id="L50">        return position;</span>
+<span class="fc" id="L54">        return position;</span>
     }
 
     /**
@@ -56,22 +60,22 @@ public abstract class Piece {
      * @param newPos the new position
      */
     public void setPosition(Point newPos) {
-<span class="fc" id="L59">        position = newPos;</span>
-<span class="fc" id="L60">    }</span>
+<span class="fc" id="L63">        position = newPos;</span>
+<span class="fc" id="L64">    }</span>
 
     /**
      * Method which adds one to the move count.
      */
     public void addMoveCount() {
-<span class="fc" id="L66">        moveCount = moveCount + 1;</span>
-<span class="fc" id="L67">    }</span>
+<span class="fc" id="L70">        moveCount = moveCount + 1;</span>
+<span class="fc" id="L71">    }</span>
 
     /**
      * Method which subtracts one from the move count.
      */
     public void subMoveCount() {
-<span class="fc" id="L73">        moveCount = moveCount - 1;</span>
-<span class="fc" id="L74">    }</span>
+<span class="fc" id="L77">        moveCount = moveCount - 1;</span>
+<span class="fc" id="L78">    }</span>
 
     /**
      * Checks whether this piece has been moved.
@@ -79,7 +83,7 @@ public abstract class Piece {
      * @return true if the piece has moved, false otherwise
      */
     public boolean hasMoved() {
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        return moveCount &gt; 0;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        return moveCount &gt; 0;</span>
     }
 
     /**
@@ -88,7 +92,7 @@ public abstract class Piece {
      * @param board the board to move on
      * @return a list of valid moves for the piece
      */
-    public abstract List&lt;Point&gt; validMoves(Board board);
+    public abstract List&lt;GenericMove&gt; validMoves(Board board);
 
     /**
      * Helper method which adds all of the moves for a Piece in one straight
@@ -98,71 +102,23 @@ public abstract class Piece {
      * @param board the board on which the move will be made
      * @param direction the direction in to search for moves
      */
-    protected void addDirectionalMoves(List&lt;Point&gt; moves, Board board, Direction direction) {
-<span class="fc" id="L102">        int col = position().x;</span>
-<span class="fc" id="L103">        int row = position().y;</span>
+    protected void addDirectionalMoves(List&lt;GenericMove&gt; moves, Board board, Direction direction) {
+<span class="fc" id="L106">        int col = position().x + direction.x();</span>
+<span class="fc" id="L107">        int row = position().y + direction.y();</span>
 
-<span class="fc" id="L105">        col = col + direction.x();</span>
-<span class="fc" id="L106">        row = row + direction.y();</span>
-
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        while (Board.inBounds(col, row)) {</span>
-<span class="fc" id="L109">            Point move = new Point(col, row);</span>
-
-<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (addSquareToMoves(moves, board, move)) {</span>
-<span class="fc" id="L112">                break;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        while (Board.inBounds(col, row)) {</span>
+<span class="fc" id="L110">            Piece occupant = board.occupant(col, row);</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (occupant != null) {</span>
+<span class="fc" id="L112">                MoveFactory.addIfValid(moves, board, this, col, row, true, true);</span>
+<span class="fc" id="L113">                break;</span>
             }
 
-<span class="fc" id="L115">            col = col + direction.x();</span>
-<span class="fc" id="L116">            row = row + direction.y();</span>
-<span class="fc" id="L117">        }</span>
-<span class="fc" id="L118">    }</span>
+<span class="fc" id="L116">            MoveFactory.addIfValid(moves, board, this, col, row, true, true);</span>
 
-    /**
-     * Helper method which adds a square to a list of moves if it is not
-     * blocked, and returns whether the search along that line should cease.
-     *
-     * @param moves the list of moves to add to if valid
-     * @param board the board to check the move on
-     * @param square the square to check
-     * @return true if a blocker was encountered, false otherwise
-     */
-    private boolean addSquareToMoves(List&lt;Point&gt; moves, Board board, Point square) {
-<span class="fc" id="L130">        Piece occupant = board.occupant(square.x, square.y);</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (occupant == null) {</span>
-<span class="fc" id="L132">            moves.add(square);</span>
-<span class="fc" id="L133">            return false;</span>
-        } else {
-<span class="fc bfc" id="L135" title="All 2 branches covered.">            if (occupant.color != color) {</span>
-<span class="fc" id="L136">                moves.add(square);</span>
-            }
-<span class="fc" id="L138">            return true;</span>
-        }
-    }
-
-    /**
-     * Helper method which adds a move to a list of moves if it is on the board
-     * and not occupied by an ally.
-     *
-     * @param moves the list of moves to add to if valid
-     * @param board the board to check the move on
-     * @param square the square to check
-     * @param addEmpty whether to add the move if the target is empty
-     * @param addEnemy whether to add the move if the target contains an enemy
-     */
-    protected void addIfValid(List&lt;Point&gt; moves, Board board, Point square, boolean addEmpty, boolean addEnemy) {
-<span class="fc bfc" id="L153" title="All 2 branches covered.">        if (!Board.inBounds(square.x, square.y)) {</span>
-<span class="fc" id="L154">            return;</span>
-        }
-
-<span class="fc" id="L157">        Piece occupant = board.occupant(square.x, square.y);</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (occupant != null) {</span>
-<span class="fc bfc" id="L159" title="All 4 branches covered.">            if (occupant.color != color &amp;&amp; addEnemy) {</span>
-<span class="fc" id="L160">                moves.add(square);</span>
-            }
-<span class="fc bfc" id="L162" title="All 2 branches covered.">        } else if (addEmpty) {</span>
-<span class="fc" id="L163">            moves.add(square);</span>
-        }
-<span class="fc" id="L165">    }</span>
+<span class="fc" id="L118">            col = col + direction.x();</span>
+<span class="fc" id="L119">            row = row + direction.y();</span>
+<span class="fc" id="L120">        }</span>
+<span class="fc" id="L121">    }</span>
 
     /**
      * Checks whether this piece is equal to another.
@@ -172,57 +128,25 @@ public abstract class Piece {
      */
     @Override
     public boolean equals(Object other) {
-<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (other.getClass() != getClass()) {</span>
-<span class="fc" id="L176">            return false;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (other.getClass() != getClass()) {</span>
+<span class="fc" id="L132">            return false;</span>
         }
 
-<span class="fc" id="L179">        Piece otherPiece = (Piece) other;</span>
+<span class="fc" id="L135">        Piece otherPiece = (Piece) other;</span>
 
-<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (otherPiece.color != color) {</span>
-<span class="fc" id="L182">            return false;</span>
-        }
-
-<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (!otherPiece.position().equals(position)) {</span>
-<span class="fc" id="L186">            return false;</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (otherPiece.color != color) {</span>
+<span class="fc" id="L138">            return false;</span>
         }
 
-<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (otherPiece.moveCount != moveCount) {</span>
-<span class="fc" id="L190">            return false;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (!otherPiece.position().equals(position)) {</span>
+<span class="fc" id="L142">            return false;</span>
         }
 
-<span class="fc" id="L193">        return true;</span>
-    }
-
-    /**
-     * Method which returns a copy of this piece.
-     *
-     * @return a copy of this piece
-     */
-    public Piece copyOf() {
-<span class="fc" id="L202">        Piece copy = null;</span>
-
-<span class="fc bfc" id="L204" title="All 2 branches covered.">        if (this instanceof Queen) {</span>
-<span class="fc" id="L205">            copy = new Queen(color, position().x, position().y);</span>
-        }
-<span class="fc bfc" id="L207" title="All 2 branches covered.">        if (this instanceof Pawn) {</span>
-<span class="fc" id="L208">            copy = new Pawn(color, position().x, position().y);</span>
-        }
-<span class="fc bfc" id="L210" title="All 2 branches covered.">        if (this instanceof King) {</span>
-<span class="fc" id="L211">            copy = new King(color, position().x, position().y);</span>
-        }
-<span class="fc bfc" id="L213" title="All 2 branches covered.">        if (this instanceof Knight) {</span>
-<span class="fc" id="L214">            copy = new Knight(color, position().x, position().y);</span>
-        }
-<span class="fc bfc" id="L216" title="All 2 branches covered.">        if (this instanceof Bishop) {</span>
-<span class="fc" id="L217">            copy = new Bishop(color, position().x, position().y);</span>
-        }
-<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (this instanceof Rook) {</span>
-<span class="fc" id="L220">            copy = new Rook(color, position().x, position().y);</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (otherPiece.moveCount != moveCount) {</span>
+<span class="fc" id="L146">            return false;</span>
         }
 
-<span class="fc" id="L223">        copy.moveCount = moveCount;</span>
-
-<span class="fc" id="L225">        return copy;</span>
+<span class="fc" id="L149">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

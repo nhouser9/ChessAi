@@ -10,6 +10,8 @@ import chessboard.Color;
 import chessboard.Direction;
 import java.awt.Point;
 import java.util.ArrayList;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import java.util.List;
 
 /**
@@ -39,16 +41,20 @@ public class King extends Piece {
      * @return a list of valid moves for the piece
      */
     @Override
-    public List<Point> validMoves(Board board) {
-        List<Point> toReturn = new ArrayList<>();
+    public List<GenericMove> validMoves(Board board) {
+        List<GenericMove> toReturn = new ArrayList<>();
+        int addX;
+        int addY;
 
         for (Direction dir : Direction.values()) {
-            Point adjacent = new Point(position().x + dir.x(), position().y + dir.y());
-            addIfValid(toReturn, board, adjacent, true, true);
+            addX = position().x + dir.x();
+            addY = position().y + dir.y();
+            MoveFactory.addIfValid(toReturn, board, this, addX, addY, true, true);
 
             if (board.canCastle(dir, color)) {
-                Point castleTarget = new Point(position().x + (2 * dir.x()), position().y);
-                addIfValid(toReturn, board, castleTarget, true, false);
+                addX = position().x + (2 * dir.x());
+                addY = position().y;
+                MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
             }
         }
 

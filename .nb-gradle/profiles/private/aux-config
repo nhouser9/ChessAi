@@ -5,17 +5,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
       <group>
-        <file>file:/home/fish/NetBeansProjects/ChessAI/src/test/java/chessboard/BoardTest.java</file>
-        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/gui/AppWindow.java</file>
         <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/Board.java</file>
-        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/ChessEngine.java</file>
+        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/Move.java</file>
+        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/pieces/Piece.java</file>
       </group>
     </open-files>
     <editor-bookmarks lastBookmarkId="0" xmlns="http://www.netbeans.org/ns/editor-bookmarks/2"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
       <group>
         <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/Board.java</file>
-        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/Move.java</file>
+        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/moves/Move.java</file>
+        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/moves/EnPassant.java</file>
+        <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/moves/GenericMove.java</file>
         <file>file:/home/fish/NetBeansProjects/ChessAI/src/main/java/chessboard/pieces/Piece.java</file>
       </group>
     </open-files>

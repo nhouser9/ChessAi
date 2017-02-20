@@ -7,7 +7,7 @@ package ai;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
 import chessboard.pieces.Piece;
@@ -57,7 +57,7 @@ public class MoveSelectorTest {
         Board testBoard = new Board(initialPieces, Color.BLACK);
         MoveSelector test = new MoveSelector(testBoard, 4);
 
-        Move result = test.bestMove();
+        GenericMove result = test.bestMove();
         assertTrue(result.to.equals(new Point(2, 1)));
     }
 
@@ -71,7 +71,7 @@ public class MoveSelectorTest {
         Board testBoard = new Board(initialPieces, Color.WHITE);
         MoveSelector test = new MoveSelector(testBoard, 1);
 
-        Move result = test.bestMove();
+        GenericMove result = test.bestMove();
         assertTrue(result.to.equals(new Point(6, 0)));
         assertTrue(result.piece instanceof Rook);
     }

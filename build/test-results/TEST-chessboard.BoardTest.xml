@@ -1,37 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chessboard.BoardTest" tests="32" skipped="0" failures="0" errors="0" timestamp="2017-02-20T03:34:17" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.098">
+<testsuite name="chessboard.BoardTest" tests="29" skipped="0" failures="0" errors="0" timestamp="2017-02-20T08:29:20" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.094">
   <properties/>
-  <testcase name="inBounds_returnsFalse_whenPassedLargeY" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="inBounds_returnsFalse_whenPassedLargeX" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="inBounds_returnsTrue_whenPassedNormalCoOrdinates" classname="chessboard.BoardTest" time="0.001"/>
+  <testcase name="inBounds_returnsFalse_whenPassedNegativeX" classname="chessboard.BoardTest" time="0.001"/>
+  <testcase name="inBounds_returnsFalse_whenPassedLargeY" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="inBounds_returnsFalse_whenPassedNegativeY" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="inBounds_returnsFalse_whenPassedLargeX" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="inBounds_returnsTrue_whenPassedNormalCoOrdinates" classname="chessboard.BoardTest" time="0.0"/>
   <testcase name="validMoves_allowsOnlyWhiteToMoveFirst" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="validMoves_enforcesTurnOrder" classname="chessboard.BoardTest" time="0.007"/>
+  <testcase name="validMoves_enforcesTurnOrder" classname="chessboard.BoardTest" time="0.005"/>
   <testcase name="move_allowsAValidMove" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="inBounds_returnsFalse_whenPassedNegativeY" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="inBounds_returnsFalse_whenPassedNegativeX" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="move_preventsAnInvalidMove" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="move_updatesMoverPosition_whenSuccessful" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="lastMove_returnsTheLastMove" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="move_removesPawnDuringEnPassant" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="canCastle_returnsFalse_whenKingHasMoved" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="canCastleEast_returnsFalse_whenRightRookHasMoved" classname="chessboard.BoardTest" time="0.065"/>
-  <testcase name="canCastle_returnsFalse_whenKingIsInCheck" classname="chessboard.BoardTest" time="0.001"/>
+  <testcase name="move_preventsAnInvalidMove" classname="chessboard.BoardTest" time="0.001"/>
+  <testcase name="move_updatesMoverPosition_whenSuccessful" classname="chessboard.BoardTest" time="0.002"/>
+  <testcase name="lastMove_returnsTheLastMove" classname="chessboard.BoardTest" time="0.002"/>
+  <testcase name="move_removesPawnDuringEnPassant" classname="chessboard.BoardTest" time="0.001"/>
+  <testcase name="canCastle_returnsFalse_whenKingHasMoved" classname="chessboard.BoardTest" time="0.002"/>
+  <testcase name="canCastleEast_returnsFalse_whenRightRookHasMoved" classname="chessboard.BoardTest" time="0.059"/>
+  <testcase name="canCastle_returnsFalse_whenKingIsInCheck" classname="chessboard.BoardTest" time="0.0"/>
   <testcase name="canCastleRight_returnsFalse_whenPiecesInTheWayOfKing" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="canCastleRight_returnsFalse_whenPiecesInTheWayOfRook" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="canCastleRight_returnsFalse_whenPiecesInTheWayOfRook" classname="chessboard.BoardTest" time="0.001"/>
   <testcase name="canCastleRight_returnsFalse_whenInterveningSpaceThreatened" classname="chessboard.BoardTest" time="0.0"/>
   <testcase name="canCastle_returnsTrue_whenUnblockedUnthreatenedAndUnmoved" classname="chessboard.BoardTest" time="0.0"/>
   <testcase name="canCastle_returnsFalse_whenPassedADirectionNotEastOrWest" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="moveSacksKing_returnsTrue_whenMovingIntoCheck" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="moveSacksKing_returnsTrue_whenMovingIntoCheck" classname="chessboard.BoardTest" time="0.001"/>
   <testcase name="moveSacksKing_returnsFalse_whenMovingNormally" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="validMoves_preventsMovingIntoCheck" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="move_movesRookDuringCastleRight" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="validMoves_preventsMovingIntoCheck" classname="chessboard.BoardTest" time="0.001"/>
+  <testcase name="move_movesRookDuringCastleRight" classname="chessboard.BoardTest" time="0.001"/>
   <testcase name="move_movesRookDuringCastleLeft" classname="chessboard.BoardTest" time="0.001"/>
   <testcase name="move_queensPawns_whenTheyReachTheLastRow" classname="chessboard.BoardTest" time="0.0"/>
-  <testcase name="copyOf_placesPiecesCorrectly" classname="chessboard.BoardTest" time="0.002"/>
-  <testcase name="copyOf_performsDeepCopy" classname="chessboard.BoardTest" time="0.002"/>
-  <testcase name="copyOf_copiesActivePlayer" classname="chessboard.BoardTest" time="0.002"/>
   <testcase name="revertMove_restoresOriginalBoardState_afterOneMoveThenEnPassant" classname="chessboard.BoardTest" time="0.001"/>
-  <testcase name="revertMove_restoresOriginalBoardState_afterThreeMovesThenEnPassant" classname="chessboard.BoardTest" time="0.0"/>
+  <testcase name="revertMove_restoresOriginalBoardState_afterThreeMovesThenEnPassant" classname="chessboard.BoardTest" time="0.001"/>
   <testcase name="revertMove_doesNotDuplicatePawn_whenAdvancingAndEnPassantPossible" classname="chessboard.BoardTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

@@ -8,7 +8,8 @@ package gui;
 import ai.MoveSelector;
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import chessboard.pieces.Piece;
 import java.awt.Point;
 import javafx.geometry.Pos;
@@ -113,8 +114,8 @@ public class BoardPane extends GridPane {
         if (selection == null) {
             selection = occupant;
         } else {
-            Move attempt = new Move(board, selection, new Point(col, row));
-            if (board.move(attempt)) {
+            GenericMove attempt = MoveFactory.create(board, selection, col, row);
+            if (attempt.execute()) {
                 refreshSquares();
                 selection = null;
             } else {

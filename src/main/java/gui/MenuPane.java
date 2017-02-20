@@ -48,12 +48,12 @@ public class MenuPane extends GridPane {
         });
 
         computerMove.setOnAction((ActionEvent t) -> {
-            gameBoard.move(new MoveSelector(gameBoard, 4).bestMove());
+            new MoveSelector(gameBoard, 4).bestMove().execute();
             boardPane.refreshSquares();
         });
 
         undoMove.setOnAction((ActionEvent t) -> {
-            gameBoard.revertMove();
+            gameBoard.lastMove().revert();
             boardPane.refreshSquares();
         });
 

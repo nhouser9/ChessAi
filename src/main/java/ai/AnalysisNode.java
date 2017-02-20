@@ -6,7 +6,7 @@
 package ai;
 
 import chessboard.Board;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class AnalysisNode {
     public final double value;
 
     //the move that must be made to reach this state from the parent state
-    public final Move moveToReach;
+    public final GenericMove moveToReach;
 
     //the parent of this node
     private AnalysisNode parent;
@@ -39,7 +39,7 @@ public class AnalysisNode {
      * @param board the board state at this node
      * @param move the move required to reach this board from the parent state
      */
-    public AnalysisNode(Board board, Move move) {
+    public AnalysisNode(Board board, GenericMove move) {
         children = new LinkedList<>();
         parent = null;
         moveToReach = move;

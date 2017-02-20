@@ -48,12 +48,12 @@ public class MenuPane extends GridPane {
 <span class="nc" id="L48">        });</span>
 
 <span class="nc" id="L50">        computerMove.setOnAction((ActionEvent t) -&gt; {</span>
-<span class="nc" id="L51">            gameBoard.move(new MoveSelector(gameBoard, 4).bestMove());</span>
+<span class="nc" id="L51">            new MoveSelector(gameBoard, 4).bestMove().execute();</span>
 <span class="nc" id="L52">            boardPane.refreshSquares();</span>
 <span class="nc" id="L53">        });</span>
 
 <span class="nc" id="L55">        undoMove.setOnAction((ActionEvent t) -&gt; {</span>
-<span class="nc" id="L56">            gameBoard.revertMove();</span>
+<span class="nc" id="L56">            gameBoard.lastMove().revert();</span>
 <span class="nc" id="L57">            boardPane.refreshSquares();</span>
 <span class="nc" id="L58">        });</span>
 

@@ -6,7 +6,8 @@
 package chessboard;
 
 import chessboard.moves.GenericMove;
-import chessboard.moves.Move;
+import chessboard.moves.MoveFactory;
+import chessboard.moves.NormalMove;
 import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
@@ -98,13 +99,13 @@ public class Board {
     private Color activePlayer;
 
     //the move history
-    private Stack<Move> moveHistory;
+    private Stack<GenericMove> moveHistory;
     //the array of pieces on the board
 
     private Piece[][] pieces;
 
     //a list of possible moves from this position
-    private List<Move> possibleMoves;
+    private List<GenericMove> possibleMoves;
 
     /**
      * Constructor which initializes the piece array to the initial chess board.
@@ -144,22 +145,22 @@ public class Board {
             return false;
         }
 
-        if (moveSacksKing(new Move(this, kingSquareOccupant, kingPoint))) {
+        xIndex = xIndex + direction.x();
+        if (occupant(xIndex, activePlayer.homeRow()) != null) {
+            return false;
+        }
+
+        xIndex = xIndex + direction.x();
+        if (occupant(xIndex, activePlayer.homeRow()) != null) {
+            return false;
+        }
+
+        if (MoveFactory.create(this, kingSquareOccupant, kingPoint.x, kingPoint.y).endangersKing()) {
             return false;
         }
 
         kingPoint = new Point(kingPoint.x + direction.x(), kingPoint.y);
-        if (moveSacksKing(new Move(this, kingSquareOccupant, kingPoint))) {
-            return false;
-        }
-
-        xIndex = xIndex + direction.x();
-        if (occupant(xIndex, activePlayer.homeRow()) != null) {
-            return false;
-        }
-
-        xIndex = xIndex + direction.x();
-        if (occupant(xIndex, activePlayer.homeRow()) != null) {
+        if (MoveFactory.create(this, kingSquareOccupant, kingPoint.x, kingPoint.y).endangersKing()) {
             return false;
         }
 
@@ -172,29 +173,6 @@ public class Board {
         }
 
         return true;
-    }
-
-    /**
-     * Method which returns a deep copy of this Board.
-     *
-     * @return a deep copy of this Board
-     */
-    public Board copyOf() {
-        List<Piece> occupants = new LinkedList<>();
-
-        for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
-            for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-                Piece occupant = occupant(col, row);
-                if (occupant != null) {
-                    Piece copy = occupant.copyOf();
-                    occupants.add(copy);
-                }
-            }
-        }
-
-        Board toReturn = new Board(occupants, activePlayer);
-
-        return toReturn;
     }
 
     /**
@@ -304,51 +282,6 @@ public class Board {
     }
 
     /**
-     * Method which attempts to execute a given move on this board. Returns
-     * whether the move was a success. If so, the move will be made and added to
-     * the move history.
-     *
-     * @param toExecute the move to make
-     * @return true if the move succeeded, false otherwise
-     */
-    public boolean move(Move toExecute) {
-        if (validMoves().contains(toExecute)) {
-            updateBoard(toExecute);
-            activePlayer = activePlayer.enemy();
-            moveHistory.add(toExecute);
-            possibleMoves = null;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Method which checks whether a given move would allow the king to be
-     * captured, which would make it illegal. Sets up the board as if the move
-     * had been made then delegats the actual check to another method.
-     *
-     * @param toExecute the move to check
-     * @return true if the move is illegal because it allows capture of the
-     * king, false otherwise
-     */
-    public boolean moveSacksKing(Move toExecute) {
-        updateBoard(toExecute);
-
-        King king = findKing(toExecute.piece.color);
-        boolean toReturn;
-        if (king == null) {
-            toReturn = false;
-        } else {
-            toReturn = kingThreatened(king);
-        }
-
-        revertBoard(toExecute);
-
-        return toReturn;
-    }
-
-    /**
      * Method which returns the occupant of the given position.
      *
      * @param xPosition the x position to check
@@ -375,7 +308,7 @@ public class Board {
      *
      * @return a list of past moves made on the board
      */
-    public Move lastMove() {
+    public GenericMove lastMove() {
         if (moveHistory.isEmpty()) {
             return null;
         }
@@ -386,18 +319,8 @@ public class Board {
         moveHistory.pop();
     }
 
-    //public void addToHistory(GenericMove move) {
-    //moveHistory.add(move);
-    //}
-    /**
-     * Method which attempts to revert a given move on this board. The move will
-     * be undone and removed from the history.
-     */
-    public void revertMove() {
-        Move lastMove = moveHistory.pop();
-        revertBoard(lastMove);
-        activePlayer = activePlayer.enemy();
-        possibleMoves = null;
+    public void addToHistory(GenericMove move) {
+        moveHistory.add(move);
     }
 
     /**
@@ -405,7 +328,7 @@ public class Board {
      *
      * @return a list of possible moves from this board state
      */
-    public List<Move> validMoves() {
+    public List<GenericMove> validMoves() {
         if (possibleMoves == null) {
             possibleMoves = calculatePossibleMoves(activePlayer);
         }
@@ -426,20 +349,19 @@ public class Board {
      * @param player the player whose moves should be calculated
      * @return a list of possible moves in the current position
      */
-    private List<Move> calculatePossibleMoves(Color player) {
-        List<Move> toReturn = new LinkedList<>();
+    private List<GenericMove> calculatePossibleMoves(Color player) {
+        List<GenericMove> toReturn = new LinkedList<>();
         for (int col = 0; col < SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < SQUARES_PER_SIDE; row++) {
                 Piece occupant = occupant(col, row);
                 if (occupant == null || occupant.color != player) {
                     continue;
                 }
-                for (Point target : occupant.validMoves(this)) {
-                    Move potential = new Move(this, occupant, target);
-                    if (moveSacksKing(potential)) {
+                for (GenericMove target : occupant.validMoves(this)) {
+                    if (target.endangersKing()) {
                         continue;
                     }
-                    toReturn.add(potential);
+                    toReturn.add(target);
                 }
             }
         }
@@ -459,43 +381,6 @@ public class Board {
     }
 
     /**
-     * Helper method which reverts the board and the Piece that was moved to
-     * reflect the previous game state. Includes handling moves that affect more
-     * than one piece, like en passant, queening, and castling.
-     *
-     * @param toExecute the move to make
-     */
-    private void revertBoard(Move toRevert) {
-        //handle normal case
-        Piece mover = toRevert.piece;
-        pieces[toRevert.from.x][toRevert.from.y] = mover;
-        mover.setPosition(toRevert.from);
-        mover.subMoveCount();
-
-        //handle en passant
-        if (toRevert.enPassant) {
-            pieces[toRevert.to.x][toRevert.to.y - mover.color.forwardDirection().y()] = toRevert.target;
-            pieces[toRevert.to.x][toRevert.to.y] = null;
-        } else {
-            pieces[toRevert.to.x][toRevert.to.y] = toRevert.target;
-        }
-
-        //handle castle
-        int homeRow = mover.color.homeRow();
-        if (toRevert.castle) {
-            if (toRevert.to.x > 4) {
-                pieces[7][homeRow] = pieces[5][homeRow];
-                pieces[5][homeRow] = null;
-                pieces[7][homeRow].setPosition(new Point(7, homeRow));
-            } else {
-                pieces[0][homeRow] = pieces[3][homeRow];
-                pieces[3][homeRow] = null;
-                pieces[0][homeRow].setPosition(new Point(0, homeRow));
-            }
-        }
-    }
-
-    /**
      * Helper method which adds the inital pieces to the board.
      *
      * @param initialPieces the initial pieces to add
@@ -505,46 +390,4 @@ public class Board {
             pieces[piece.position().x][piece.position().y] = piece;
         }
     }
-
-    /**
-     * Helper method which updates the board and the Piece that was moved to
-     * reflect the new game state. Includes handling moves that affect more than
-     * one piece, like en passant, queening, and castling.
-     *
-     * @param toExecute the move to make
-     */
-    private void updateBoard(Move toExecute) {
-        //handle normal case
-        pieces[toExecute.from.x][toExecute.from.y] = null;
-        pieces[toExecute.to.x][toExecute.to.y] = toExecute.piece;
-        Piece mover = toExecute.piece;
-        mover.setPosition(toExecute.to);
-        mover.addMoveCount();
-
-        //handle en passant
-        if (toExecute.enPassant) {
-            pieces[toExecute.to.x][toExecute.to.y + 1] = null;
-            pieces[toExecute.to.x][toExecute.to.y - 1] = null;
-        }
-
-        //handle castle
-        int homeRow = mover.color.homeRow();
-        if (toExecute.castle) {
-            if (toExecute.to.x > 4) {
-                pieces[5][homeRow] = pieces[7][homeRow];
-                pieces[7][homeRow] = null;
-                pieces[5][homeRow].setPosition(new Point(5, homeRow));
-            } else {
-                pieces[3][homeRow] = pieces[0][homeRow];
-                pieces[0][homeRow] = null;
-                pieces[3][homeRow].setPosition(new Point(3, homeRow));
-            }
-        }
-
-        //handle queening
-        if (mover instanceof Pawn && mover.position().y == mover.color.queenRow()) {
-            pieces[mover.position().x][mover.position().y] = new Queen(mover.color, mover.position().x, mover.position().y);
-        }
-    }
-
 }

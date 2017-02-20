@@ -7,7 +7,7 @@ package ai;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
 import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
@@ -59,8 +59,8 @@ public class PositionAnalysis {
 <span class="fc bfc" id="L59" title="All 2 branches covered.">        if (!toAnalyze.kingThreatened(activeKing)) {</span>
 <span class="fc" id="L60">            return 0;</span>
         }
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (Point kingMove : activeKing.validMoves(toAnalyze)) {</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (!toAnalyze.moveSacksKing(new Move(toAnalyze, activeKing, kingMove))) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (GenericMove kingMove : activeKing.validMoves(toAnalyze)) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (!kingMove.endangersKing()) {</span>
 <span class="fc" id="L64">                return 0;</span>
             }
 <span class="fc" id="L66">        }</span>

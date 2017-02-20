@@ -10,14 +10,47 @@ import chessboard.pieces.Piece;
 import java.awt.Point;
 
 /**
+ * Class representing an en passant move, which is a special move where a pawn
+ * can capture an enemy whose first move takes it past the pawn in question.
  *
  * @author Nick Houser
  */
-public class EnPassant extends Move {
+public class EnPassant extends GenericMove {
 
-    public EnPassant(Board board, Piece mover, Point targetPosition) {
-<span class="nc" id="L19">        super(board, mover, targetPosition);</span>
-<span class="nc" id="L20">    }</span>
+    //the enemy pawn that will be captured
+    public final Piece captured;
 
+    /**
+     * Constructor which calls the inherited constructor before calculating and
+     * storing the target of this en passant.
+     *
+     * @param board the game board on which the move will be made
+     * @param mover the Piece undertaking the move
+     * @param targetPosition the Point the mover is moving to
+     */
+    protected EnPassant(Board board, Piece mover, Point targetPosition) {
+<span class="fc" id="L32">        super(board, mover, targetPosition);</span>
+<span class="fc" id="L33">        int captureY = targetPosition.y - mover.color.forwardDirection().y();</span>
+<span class="fc" id="L34">        captured = board.occupant(targetPosition.x, captureY);</span>
+<span class="fc" id="L35">    }</span>
+
+    /**
+     * The non-generic component of an en passant move. Removes the captured
+     * piece.
+     */
+    @Override
+    protected void implementationExecute() {
+<span class="fc" id="L43">        int x = 2;</span>
+<span class="fc" id="L44">        board.setOccupant(captured.position().x, captured.position().y, null);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * The non-generic component of an en passant reversion. Restores the
+     * captured piece.
+     */
+    @Override
+    protected void implementationRevert() {
+<span class="fc" id="L53">        board.setOccupant(captured.position().x, captured.position().y, captured);</span>
+<span class="fc" id="L54">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

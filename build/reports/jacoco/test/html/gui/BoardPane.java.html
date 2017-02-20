@@ -8,7 +8,8 @@ package gui;
 import ai.MoveSelector;
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.moves.Move;
+import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
 import chessboard.pieces.Piece;
 import java.awt.Point;
 import javafx.geometry.Pos;
@@ -37,22 +38,22 @@ public class BoardPane extends GridPane {
     /**
      * Constructor which initializes each board square on the board.
      */
-<span class="nc" id="L40">    public BoardPane() {</span>
-<span class="nc" id="L41">        setAlignment(Pos.CENTER);</span>
-<span class="nc" id="L42">        addBoardSquares();</span>
-<span class="nc" id="L43">    }</span>
+<span class="nc" id="L41">    public BoardPane() {</span>
+<span class="nc" id="L42">        setAlignment(Pos.CENTER);</span>
+<span class="nc" id="L43">        addBoardSquares();</span>
+<span class="nc" id="L44">    }</span>
 
     /**
      * Helper method which refreshes the visual state of all squares on the
      * board and their occupants.
      */
     public void refreshSquares() {
-<span class="nc bnc" id="L50" title="All 2 branches missed.">        for (int refreshCol = 0; refreshCol &lt; squares.length; refreshCol++) {</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">            for (int refreshRow = 0; refreshRow &lt; squares.length; refreshRow++) {</span>
-<span class="nc" id="L52">                squares[refreshCol][refreshRow].refreshState(board);</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        for (int refreshCol = 0; refreshCol &lt; squares.length; refreshCol++) {</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            for (int refreshRow = 0; refreshRow &lt; squares.length; refreshRow++) {</span>
+<span class="nc" id="L53">                squares[refreshCol][refreshRow].refreshState(board);</span>
             }
         }
-<span class="nc" id="L55">    }</span>
+<span class="nc" id="L56">    }</span>
 
     /**
      * Method which resets the game board to a new board.
@@ -60,8 +61,8 @@ public class BoardPane extends GridPane {
      * @param toSet the new board to set
      */
     public void setBoard(Board toSet) {
-<span class="nc" id="L63">        board = toSet;</span>
-<span class="nc" id="L64">    }</span>
+<span class="nc" id="L64">        board = toSet;</span>
+<span class="nc" id="L65">    }</span>
 
     /**
      * Helper method which adds the grid squares to the GridPane.
@@ -69,27 +70,27 @@ public class BoardPane extends GridPane {
      * @param grid the GridPane to add to
      */
     private void addBoardSquares() {
-<span class="nc" id="L72">        Image[] backgrounds = {loadImage(&quot;LightSquare.png&quot;), loadImage(&quot;DarkSquare.png&quot;)};</span>
-<span class="nc" id="L73">        int backgroundIndex = 0;</span>
+<span class="nc" id="L73">        Image[] backgrounds = {loadImage(&quot;LightSquare.png&quot;), loadImage(&quot;DarkSquare.png&quot;)};</span>
+<span class="nc" id="L74">        int backgroundIndex = 0;</span>
 
-<span class="nc" id="L75">        squares = new BoardSquare[Board.SQUARES_PER_SIDE][Board.SQUARES_PER_SIDE];</span>
-<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (int col = 0; col &lt; Board.SQUARES_PER_SIDE; col++) {</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">            for (int row = 0; row &lt; Board.SQUARES_PER_SIDE; row++) {</span>
-<span class="nc" id="L78">                ImageView background = new ImageView(backgrounds[backgroundIndex]);</span>
-<span class="nc" id="L79">                backgroundIndex = (backgroundIndex + 1) % backgrounds.length;</span>
+<span class="nc" id="L76">        squares = new BoardSquare[Board.SQUARES_PER_SIDE][Board.SQUARES_PER_SIDE];</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        for (int col = 0; col &lt; Board.SQUARES_PER_SIDE; col++) {</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            for (int row = 0; row &lt; Board.SQUARES_PER_SIDE; row++) {</span>
+<span class="nc" id="L79">                ImageView background = new ImageView(backgrounds[backgroundIndex]);</span>
+<span class="nc" id="L80">                backgroundIndex = (backgroundIndex + 1) % backgrounds.length;</span>
 
-<span class="nc" id="L81">                BoardSquare toAdd = new BoardSquare(col, row, background);</span>
+<span class="nc" id="L82">                BoardSquare toAdd = new BoardSquare(col, row, background);</span>
 
-<span class="nc" id="L83">                squares[col][row] = toAdd;</span>
-<span class="nc" id="L84">                add(toAdd, col, row);</span>
+<span class="nc" id="L84">                squares[col][row] = toAdd;</span>
+<span class="nc" id="L85">                add(toAdd, col, row);</span>
 
-<span class="nc" id="L86">                toAdd.setOnMouseClicked((MouseEvent t) -&gt; {</span>
-<span class="nc" id="L87">                    handleClick(toAdd.col, toAdd.row);</span>
-<span class="nc" id="L88">                });</span>
+<span class="nc" id="L87">                toAdd.setOnMouseClicked((MouseEvent t) -&gt; {</span>
+<span class="nc" id="L88">                    handleClick(toAdd.col, toAdd.row);</span>
+<span class="nc" id="L89">                });</span>
             }
-<span class="nc" id="L90">            backgroundIndex = (backgroundIndex + 1) % backgrounds.length;</span>
+<span class="nc" id="L91">            backgroundIndex = (backgroundIndex + 1) % backgrounds.length;</span>
         }
-<span class="nc" id="L92">    }</span>
+<span class="nc" id="L93">    }</span>
 
     /**
      * Helper method which loads and returns a JavaFX Image from the specified
@@ -99,7 +100,7 @@ public class BoardPane extends GridPane {
      * @return the loaded Image object
      */
     private Image loadImage(String path) {
-<span class="nc" id="L102">        return new Image(getClass().getClassLoader().getResource(path).toExternalForm());</span>
+<span class="nc" id="L103">        return new Image(getClass().getClassLoader().getResource(path).toExternalForm());</span>
     }
 
     /**
@@ -109,18 +110,18 @@ public class BoardPane extends GridPane {
      * @param row the row of the clicked location
      */
     private void handleClick(int col, int row) {
-<span class="nc" id="L112">        Piece occupant = board.occupant(col, row);</span>
-<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (selection == null) {</span>
-<span class="nc" id="L114">            selection = occupant;</span>
+<span class="nc" id="L113">        Piece occupant = board.occupant(col, row);</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (selection == null) {</span>
+<span class="nc" id="L115">            selection = occupant;</span>
         } else {
-<span class="nc" id="L116">            Move attempt = new Move(board, selection, new Point(col, row));</span>
-<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (board.move(attempt)) {</span>
-<span class="nc" id="L118">                refreshSquares();</span>
-<span class="nc" id="L119">                selection = null;</span>
+<span class="nc" id="L117">            GenericMove attempt = MoveFactory.create(board, selection, col, row);</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (attempt.execute()) {</span>
+<span class="nc" id="L119">                refreshSquares();</span>
+<span class="nc" id="L120">                selection = null;</span>
             } else {
-<span class="nc" id="L121">                selection = occupant;</span>
+<span class="nc" id="L122">                selection = occupant;</span>
             }
         }
-<span class="nc" id="L124">    }</span>
+<span class="nc" id="L125">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>
