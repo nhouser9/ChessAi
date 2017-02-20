@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PositionAnalysis.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ChessAI</a> &gt; <a href="index.source.html" class="el_package">ai</a> &gt; <span class="el_source">PositionAnalysis.java</span></div><h1>PositionAnalysis.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ai;
+
+import chessboard.Board;
+import chessboard.Color;
+import chessboard.moves.Move;
+import chessboard.pieces.Bishop;
+import chessboard.pieces.King;
+import chessboard.pieces.Knight;
+import chessboard.pieces.Pawn;
+import chessboard.pieces.Piece;
+import chessboard.pieces.Queen;
+import chessboard.pieces.Rook;
+import java.awt.Point;
+
+/**
+ * Class which analyzes a position and assigns it a value. This is used for
+ * deciding which move is best.
+ *
+ * @author Nick Houser
+ */
+public class PositionAnalysis {
+
+    //values for all of the respective factors
+    protected static final double VALUE_QUEEN = 9;
+    protected static final double VALUE_PAWN = 1;
+    protected static final double VALUE_KNIGHT = 3;
+    protected static final double VALUE_BISHOP = 3;
+    protected static final double VALUE_ROOK = 5;
+    protected static final double VALUE_CHECKMATE = 10000;
+
+    //the value of this position
+    public final double value;
+
+    /**
+     * Method which returns the value of a passed position.
+     *
+     * @param toAnalyze the board to analyze
+     */
+<span class="fc" id="L44">    public PositionAnalysis(Board toAnalyze) {</span>
+<span class="fc" id="L45">        double aggregateValue = 0.0;</span>
+<span class="fc" id="L46">        aggregateValue = aggregateValue + addCheckmateValue(toAnalyze);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (aggregateValue == 0.0) {</span>
+<span class="fc" id="L48">            aggregateValue = aggregateValue + addMaterialValues(toAnalyze);</span>
+        }
+<span class="fc" id="L50">        value = aggregateValue;</span>
+<span class="fc" id="L51">    }</span>
+
+    private double addCheckmateValue(Board toAnalyze) {
+<span class="fc" id="L54">        Color active = toAnalyze.getActivePlayer();</span>
+<span class="fc" id="L55">        King activeKing = toAnalyze.findKing(active);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (activeKing == null) {</span>
+<span class="fc" id="L57">            return 0;</span>
+        }
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (!toAnalyze.kingThreatened(activeKing)) {</span>
+<span class="fc" id="L60">            return 0;</span>
+        }
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (Point kingMove : activeKing.validMoves(toAnalyze)) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (!toAnalyze.moveSacksKing(new Move(toAnalyze, activeKing, kingMove))) {</span>
+<span class="fc" id="L64">                return 0;</span>
+            }
+<span class="fc" id="L66">        }</span>
+<span class="fc" id="L67">        return VALUE_CHECKMATE * colorFactor(active.enemy());</span>
+    }
+
+    /**
+     * Method which applies the rules for material value of each piece.
+     *
+     * @param toAnalyze the board to analyze
+     */
+    private double addMaterialValues(Board toAnalyze) {
+<span class="fc" id="L76">        double toReturn = 0.0;</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        for (int col = 0; col &lt; Board.SQUARES_PER_SIDE; col++) {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            for (int row = 0; row &lt; Board.SQUARES_PER_SIDE; row++) {</span>
+<span class="fc" id="L79">                Piece occupant = toAnalyze.occupant(col, row);</span>
+<span class="fc" id="L80">                double pieceValue = 0.0;</span>
+
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                if (occupant == null) {</span>
+<span class="fc" id="L83">                    continue;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                } else if (occupant instanceof Queen) {</span>
+<span class="fc" id="L85">                    pieceValue = VALUE_QUEEN;</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                } else if (occupant instanceof Bishop) {</span>
+<span class="fc" id="L87">                    pieceValue = VALUE_BISHOP;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                } else if (occupant instanceof Knight) {</span>
+<span class="fc" id="L89">                    pieceValue = VALUE_KNIGHT;</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">                } else if (occupant instanceof Pawn) {</span>
+<span class="fc" id="L91">                    pieceValue = VALUE_PAWN;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                } else if (occupant instanceof Rook) {</span>
+<span class="fc" id="L93">                    pieceValue = VALUE_ROOK;</span>
+                }
+
+<span class="fc" id="L96">                toReturn = toReturn + (colorFactor(occupant.color) * pieceValue);</span>
+            }
+        }
+<span class="fc" id="L99">        return toReturn;</span>
+    }
+
+    /**
+     * Method which determines the sign of a beneficial position for the given
+     * color. By convention negative values indicate a winning position for
+     * black, while positive ones indicate a winning position for white.
+     *
+     * @param color the color to check the factor for
+     * @return the sign of the color's factor
+     */
+    private int colorFactor(Color color) {
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (color == Color.WHITE) {</span>
+<span class="fc" id="L112">            return 1;</span>
+        } else {
+<span class="fc" id="L114">            return -1;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

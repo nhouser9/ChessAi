@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GenericMove.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ChessAI</a> &gt; <a href="index.source.html" class="el_package">chessboard.moves</a> &gt; <span class="el_source">GenericMove.java</span></div><h1>GenericMove.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package chessboard.moves;
+
+import chessboard.Board;
+import chessboard.pieces.Piece;
+import java.awt.Point;
+
+/**
+ *
+ * @author Nick Houser
+ */
+public abstract class GenericMove {
+
+    //general immutable move info
+    public final Piece piece;
+    public final Point from;
+    public final Point to;
+
+    //the board on which the move will be made
+    private final Board board;
+
+<span class="nc" id="L26">    public GenericMove(Board board, Piece mover, Point targetPosition) {</span>
+<span class="nc" id="L27">        this.board = board;</span>
+<span class="nc" id="L28">        piece = mover;</span>
+<span class="nc" id="L29">        from = mover.position();</span>
+<span class="nc" id="L30">        to = targetPosition;</span>
+<span class="nc" id="L31">    }</span>
+
+    public boolean execute() {
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if (!board.validMoves().contains(this)) {</span>
+<span class="nc" id="L35">            return false;</span>
+        }
+
+<span class="nc" id="L38">        updateBoard();</span>
+<span class="nc" id="L39">        board.passTurn();</span>
+        //board.addToHistory(this);
+<span class="nc" id="L41">        board.resetValidMoves();</span>
+<span class="nc" id="L42">        return true;</span>
+    }
+
+    /**
+     * Helper method which updates the board and the Piece that was moved to
+     * reflect new game state following this move. Calls implementationExecute
+     * to ensure special cases like en passant are handled.
+     */
+    private void updateBoard() {
+<span class="nc" id="L51">        board.setOccupant(from.x, from.y, null);</span>
+<span class="nc" id="L52">        board.setOccupant(to.x, to.y, piece);</span>
+<span class="nc" id="L53">        piece.setPosition(to);</span>
+<span class="nc" id="L54">        piece.addMoveCount();</span>
+<span class="nc" id="L55">        implementationExecute();</span>
+<span class="nc" id="L56">    }</span>
+
+    public boolean revert() {
+        //if (board.lastMove() != this) {
+        //return false;
+        //}
+
+<span class="nc" id="L63">        revertBoard();</span>
+<span class="nc" id="L64">        board.passTurn();</span>
+<span class="nc" id="L65">        board.removeLastMove();</span>
+<span class="nc" id="L66">        board.resetValidMoves();</span>
+<span class="nc" id="L67">        return true;</span>
+    }
+
+    /**
+     * Helper method which updates the board and the Piece that was moved to
+     * reflect the game state prior to this move. Calls implementationRevert to
+     * ensure special cases like en passant are handled.
+     */
+    private void revertBoard() {
+<span class="nc" id="L76">        board.setOccupant(to.x, to.y, null);</span>
+<span class="nc" id="L77">        board.setOccupant(from.x, from.y, piece);</span>
+<span class="nc" id="L78">        piece.setPosition(from);</span>
+<span class="nc" id="L79">        piece.subMoveCount();</span>
+<span class="nc" id="L80">        implementationRevert();</span>
+<span class="nc" id="L81">    }</span>
+
+    public abstract GenericMove copyOf();
+
+    protected abstract void implementationExecute();
+
+    protected abstract void implementationRevert();
+
+    /**
+     * Override for the equals method for comparing to other moves.
+     *
+     * @param other the Object to compare this to
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (other instanceof Move) {</span>
+<span class="nc" id="L98">            GenericMove otherMove = (GenericMove) other;</span>
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">            if (!otherMove.from.equals(from)) {</span>
+<span class="nc" id="L101">                return false;</span>
+            }
+
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (!otherMove.to.equals(to)) {</span>
+<span class="nc" id="L105">                return false;</span>
+            }
+
+<span class="nc bnc" id="L108" title="All 2 branches missed.">            if (!otherMove.piece.equals(piece)) {</span>
+<span class="nc" id="L109">                return false;</span>
+            }
+
+<span class="nc" id="L112">            return true;</span>
+        }
+
+<span class="nc" id="L115">        return false;</span>
+    }
+
+    /**
+     * Method which gets a key for storing this in a hash data structure.
+     *
+     * @return a key for storing this in a hash data structure
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L125">        int hash = 5;</span>
+<span class="nc" id="L126">        hash = 59 * hash + this.from.x;</span>
+<span class="nc" id="L127">        hash = 59 * hash + this.from.y;</span>
+<span class="nc" id="L128">        hash = 59 * hash + this.to.x;</span>
+<span class="nc" id="L129">        hash = 59 * hash + this.to.y;</span>
+<span class="nc" id="L130">        return hash;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

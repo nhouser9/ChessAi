@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AnalysisTree.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ChessAI</a> &gt; <a href="index.source.html" class="el_package">ai</a> &gt; <span class="el_source">AnalysisTree.java</span></div><h1>AnalysisTree.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ai;
+
+import chessboard.Board;
+import chessboard.Color;
+import chessboard.Move;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Class representing a tree which will analyze and select all possible board
+ * states that are reachable after a given number of moves.
+ *
+ * @author Nick Houser
+ */
+public class AnalysisTree {
+
+    //the root of the tree
+    private AnalysisNode rootNode;
+
+    //the depth of the tree
+    private int depth;
+
+    /**
+     * Constructor which builds the full tree to the specified move depth.
+     *
+     * @param toAnalyze the board to analyze
+     * @param depth the number of moves ahead to analyze
+     */
+<span class="fc" id="L35">    public AnalysisTree(Board toAnalyze, int depth) {</span>
+<span class="fc" id="L36">        this.depth = depth;</span>
+<span class="fc" id="L37">        rootNode = new AnalysisNode(toAnalyze, null);</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        for (int currentDepth = 0; currentDepth &lt; depth; currentDepth++) {</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            for (AnalysisNode leaf : leaves()) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                for (Move possible : leaf.board.validMoves()) {</span>
+<span class="fc" id="L41">                    Board newChild = leaf.board.copyOf();</span>
+<span class="fc" id="L42">                    Move possibleCopy = possible.copyOf(newChild);</span>
+<span class="fc" id="L43">                    Move moveToReach = possible.copyOf(newChild);</span>
+<span class="fc" id="L44">                    newChild.move(possibleCopy);</span>
+<span class="fc" id="L45">                    leaf.addChild(new AnalysisNode(newChild, moveToReach));</span>
+<span class="fc" id="L46">                }</span>
+<span class="fc" id="L47">            }</span>
+        }
+<span class="fc" id="L49">        calculateWorstCaseValues();</span>
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Method which returns the best possible next move.
+     *
+     * @return the best possible next move
+     */
+    public Move bestMove() {
+<span class="fc" id="L58">        Move toReturn = null;</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        for (AnalysisNode child : rootNode.children()) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (child.worstCaseValue().equals(rootNode.worstCaseValue())) {</span>
+<span class="fc" id="L61">                toReturn = child.moveToReach;</span>
+<span class="fc" id="L62">                break;</span>
+            }
+<span class="fc" id="L64">        }</span>
+<span class="fc" id="L65">        return toReturn;</span>
+    }
+
+    /**
+     * Method which returns all of the leaves of the current tree.
+     *
+     * @return all leaves of the current tree
+     */
+    private List&lt;AnalysisNode&gt; leaves() {
+<span class="fc" id="L74">        List&lt;AnalysisNode&gt; leaves = new LinkedList&lt;&gt;();</span>
+
+<span class="fc" id="L76">        recursiveLeafSearch(leaves, rootNode);</span>
+
+<span class="fc" id="L78">        return leaves;</span>
+    }
+
+    /**
+     * Helper method which recursively searches child nodes for leaves of the
+     * tree.
+     *
+     * @param leaves the list to add leaves to
+     * @param current the current node to search
+     */
+    private void recursiveLeafSearch(List&lt;AnalysisNode&gt; leaves, AnalysisNode current) {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (current.children().isEmpty()) {</span>
+<span class="fc" id="L90">            leaves.add(current);</span>
+        } else {
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            for (AnalysisNode child : current.children()) {</span>
+<span class="fc" id="L93">                recursiveLeafSearch(leaves, child);</span>
+<span class="fc" id="L94">            }</span>
+        }
+<span class="fc" id="L96">    }</span>
+
+    /**
+     * Helper method which calculates the worst case values for all of the nodes
+     * in the tree. This value is the value of each node assuming the opponent
+     * makes the best possible response.
+     */
+    private void calculateWorstCaseValues() {
+<span class="fc" id="L104">        List&lt;AnalysisNode&gt; toPushUp = leaves();</span>
+<span class="fc" id="L105">        List&lt;AnalysisNode&gt; parents = new LinkedList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for (AnalysisNode leaf : toPushUp) {</span>
+<span class="fc" id="L108">            leaf.setWorstCaseValue(leaf.value);</span>
+<span class="fc" id="L109">        }</span>
+
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        while (!toPushUp.isEmpty()) {</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            for (AnalysisNode node : toPushUp) {</span>
+<span class="fc" id="L113">                pushUpWorstCase(node);</span>
+<span class="fc bfc" id="L114" title="All 4 branches covered.">                if (node.parent() != null &amp;&amp; !parents.contains(node.parent())) {</span>
+<span class="fc" id="L115">                    parents.add(node.parent());</span>
+                }
+<span class="fc" id="L117">            }</span>
+<span class="fc" id="L118">            toPushUp = parents;</span>
+<span class="fc" id="L119">            parents = new LinkedList&lt;&gt;();</span>
+        }
+<span class="fc" id="L121">    }</span>
+
+    /**
+     * Method which pushes up the worst case values for each leaf as if the best
+     * possible move for each side was chosen.
+     *
+     * @param leaf the leaf to push up
+     */
+    private void pushUpWorstCase(AnalysisNode leaf) {
+<span class="fc" id="L130">        AnalysisNode parent = leaf.parent();</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (parent != null) {</span>
+<span class="fc" id="L132">            Double parentWorstCase = parent.worstCaseValue();</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (parentWorstCase == null) {</span>
+<span class="fc" id="L134">                parentWorstCase = leaf.worstCaseValue();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            } else if (leaf.moveToReach.piece.color == Color.WHITE) {</span>
+<span class="fc" id="L136">                parentWorstCase = Math.max(parentWorstCase, leaf.worstCaseValue());</span>
+            } else {
+<span class="fc" id="L138">                parentWorstCase = Math.min(parentWorstCase, leaf.worstCaseValue());</span>
+            }
+<span class="fc" id="L140">            parent.setWorstCaseValue(parentWorstCase);</span>
+        }
+<span class="fc" id="L142">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

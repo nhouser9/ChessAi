@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.AnalysisNodeTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2017-02-20T03:34:16" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.811">
+  <properties/>
+  <testcase name="addChild_setsParentOfChild" classname="ai.AnalysisNodeTest" time="0.787"/>
+  <testcase name="removeChild_removesAChild" classname="ai.AnalysisNodeTest" time="0.008"/>
+  <testcase name="constructor_setsValueToPositionValue" classname="ai.AnalysisNodeTest" time="0.003"/>
+  <testcase name="constructor_setsWorstCaseValueToZero" classname="ai.AnalysisNodeTest" time="0.004"/>
+  <testcase name="addChild_addsAChild" classname="ai.AnalysisNodeTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

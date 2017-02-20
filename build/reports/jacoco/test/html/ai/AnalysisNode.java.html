@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AnalysisNode.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ChessAI</a> &gt; <a href="index.source.html" class="el_package">ai</a> &gt; <span class="el_source">AnalysisNode.java</span></div><h1>AnalysisNode.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ai;
+
+import chessboard.Board;
+import chessboard.moves.Move;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ *
+ * @author Nick Houser
+ */
+public class AnalysisNode {
+
+    //the expected value of this position
+    public final double value;
+
+    //the move that must be made to reach this state from the parent state
+    public final Move moveToReach;
+
+    //the parent of this node
+    private AnalysisNode parent;
+
+    //the children of this node
+    private List&lt;AnalysisNode&gt; children;
+
+    //the value of this move assuming the best possible response from the opponent
+    private Double worstCaseValue;
+
+    /**
+     * Constructor which saves a board and initializes variables.
+     *
+     * @param board the board state at this node
+     * @param move the move required to reach this board from the parent state
+     */
+<span class="fc" id="L42">    public AnalysisNode(Board board, Move move) {</span>
+<span class="fc" id="L43">        children = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L44">        parent = null;</span>
+<span class="fc" id="L45">        moveToReach = move;</span>
+<span class="fc" id="L46">        value = new PositionAnalysis(board).value;</span>
+<span class="fc" id="L47">        worstCaseValue = null;</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Method which adds a child.
+     *
+     * @param child the child to add
+     */
+    public void addChild(AnalysisNode child) {
+<span class="fc" id="L56">        children.add(child);</span>
+<span class="fc" id="L57">        child.parent = this;</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Method which removes a child.
+     *
+     * @param child the child to remove
+     */
+    public void removeChild(AnalysisNode child) {
+<span class="fc" id="L66">        children.remove(child);</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Getter method for parent.
+     *
+     * @return the parent node
+     */
+    public AnalysisNode parent() {
+<span class="fc" id="L75">        return parent;</span>
+    }
+
+    /**
+     * Getter method for children.
+     *
+     * @return a list of children
+     */
+    public List&lt;AnalysisNode&gt; children() {
+<span class="fc" id="L84">        return Collections.unmodifiableList(children);</span>
+    }
+
+    /**
+     * Method which returns the value of this move assuming the opponent makes
+     * the best possible response.
+     *
+     * @return the value of this move assuming the opponent makes the best
+     * possible response
+     */
+    public Double worstCaseValue() {
+<span class="fc" id="L95">        return worstCaseValue;</span>
+    }
+
+    /**
+     * Method which sets the value of this move assuming the opponent makes the
+     * best possible response.
+     *
+     * @param toSet the new worst case value
+     */
+    public void setWorstCaseValue(double toSet) {
+<span class="fc" id="L105">        worstCaseValue = toSet;</span>
+<span class="fc" id="L106">    }</span>
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L110">        int hash = 3;</span>
+<span class="fc" id="L111">        hash = 97 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) &gt;&gt;&gt; 32));</span>
+<span class="fc" id="L112">        hash = 97 * hash + Objects.hashCode(this.moveToReach);</span>
+<span class="fc" id="L113">        return hash;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

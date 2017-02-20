@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Move.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ChessAI</a> &gt; <a href="index.source.html" class="el_package">chessboard.moves</a> &gt; <span class="el_source">Move.java</span></div><h1>Move.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package chessboard.moves;
+
+import chessboard.Board;
+import chessboard.pieces.King;
+import chessboard.pieces.Pawn;
+import chessboard.pieces.Piece;
+import java.awt.Point;
+
+/**
+ * Class representing a move made in the game, used for storing history and
+ * calculating whether players can castle or capture en passant.
+ *
+ * @author Nick Houser
+ */
+public class Move {
+
+    //final variables describing the details of the move
+    public final Piece piece;
+    public final Point from;
+    public final Piece target;
+    public final Point to;
+    public final boolean enPassant;
+    public final boolean castle;
+
+    //the board on which the move will be made
+    private final Board board;
+
+    /**
+     * Constructor which saves variables.
+     *
+     * @param board the game board on which the move is being made
+     * @param mover the Piece that made the move
+     * @param targetPosition the point the move will end at
+     */
+<span class="fc" id="L40">    public Move(Board board, Piece mover, Point targetPosition) {</span>
+<span class="fc" id="L41">        this.board = board;</span>
+
+<span class="fc" id="L43">        piece = mover;</span>
+<span class="fc" id="L44">        from = mover.position();</span>
+<span class="fc" id="L45">        to = targetPosition;</span>
+
+<span class="fc" id="L47">        enPassant = isEnPassant(board);</span>
+<span class="fc" id="L48">        castle = isCastle();</span>
+
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (enPassant) {</span>
+<span class="fc" id="L51">            target = board.occupant(to.x, to.y - mover.color.forwardDirection().y());</span>
+        } else {
+<span class="fc" id="L53">            target = board.occupant(to.x, to.y);</span>
+        }
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * Makes this move.
+     */
+    public void execute() {
+
+<span class="nc" id="L62">    }</span>
+
+    /**
+     * Reverts this move.
+     */
+    public void revert() {
+
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Method which determines if this move was en passant.
+     *
+     * @param board
+     * @return
+     */
+    private boolean isEnPassant(Board board) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (!(piece instanceof Pawn)) {</span>
+<span class="fc" id="L79">            return false;</span>
+        }
+
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (from.x == to.x) {</span>
+<span class="fc" id="L83">            return false;</span>
+        }
+
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (board.occupant(to.x, to.y) != null) {</span>
+<span class="nc" id="L87">            return false;</span>
+        }
+
+<span class="fc" id="L90">        return true;</span>
+    }
+
+    /**
+     * Method which determines if this move was a castle.
+     */
+    private boolean isCastle() {
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (!(piece instanceof King)) {</span>
+<span class="fc" id="L98">            return false;</span>
+        }
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        return (Math.abs(from.x - to.x) &gt; 1);</span>
+    }
+
+    /**
+     * Override for the equals method for comparing to other moves.
+     *
+     * @param other the Object to compare this to
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object other) {
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (other instanceof Move) {</span>
+<span class="fc" id="L113">            Move otherMove = (Move) other;</span>
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            if (!otherMove.from.equals(from)) {</span>
+<span class="fc" id="L116">                return false;</span>
+            }
+
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if (!otherMove.to.equals(to)) {</span>
+<span class="fc" id="L120">                return false;</span>
+            }
+
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">            if (!otherMove.piece.equals(piece)) {</span>
+<span class="nc" id="L124">                return false;</span>
+            }
+
+<span class="fc" id="L127">            return true;</span>
+        }
+
+<span class="nc" id="L130">        return false;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L135">        int hash = 5;</span>
+<span class="fc" id="L136">        hash = 59 * hash + this.from.x;</span>
+<span class="fc" id="L137">        hash = 59 * hash + this.from.y;</span>
+<span class="fc" id="L138">        hash = 59 * hash + this.to.x;</span>
+<span class="fc" id="L139">        hash = 59 * hash + this.to.y;</span>
+<span class="fc" id="L140">        return hash;</span>
+    }
+
+    /**
+     * Method which returns a copy of this Move.
+     *
+     * @param board the board used to determine whether this is a special move.
+     * @return a copy of this move
+     */
+    public Move copyOf(Board board) {
+<span class="nc" id="L150">        return new Move(board, piece.copyOf(), new Point(to.x, to.y));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>
