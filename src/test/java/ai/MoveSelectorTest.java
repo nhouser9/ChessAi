@@ -6,10 +6,14 @@
 package ai;
 
 import chessboard.Board;
+import static chessboard.Board.SQUARES_PER_SIDE;
 import chessboard.Color;
 import chessboard.moves.GenericMove;
+import chessboard.moves.MoveFactory;
+import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
+import chessboard.pieces.Pawn;
 import chessboard.pieces.Piece;
 import chessboard.pieces.Queen;
 import chessboard.pieces.Rook;

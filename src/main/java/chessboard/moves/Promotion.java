@@ -18,6 +18,9 @@ import java.awt.Point;
  */
 public class Promotion extends GenericMove {
 
+    //the enemy pawn that will be captured
+    public final Piece captured;
+
     /**
      * Constructor which calls the inherited constructor.
      *
@@ -27,6 +30,7 @@ public class Promotion extends GenericMove {
      */
     protected Promotion(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
+        captured = board.occupant(to.x, to.y);
     }
 
     /**
@@ -46,5 +50,8 @@ public class Promotion extends GenericMove {
      */
     @Override
     protected void implementationRevert() {
+        if (captured != null) {
+            board.setOccupant(captured.position().x, captured.position().y, captured);
+        }
     }
 }

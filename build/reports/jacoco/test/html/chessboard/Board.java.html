@@ -6,7 +6,6 @@
 package chessboard;
 
 import chessboard.moves.GenericMove;
-import chessboard.moves.MoveFactory;
 import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
@@ -14,10 +13,11 @@ import chessboard.pieces.Pawn;
 import chessboard.pieces.Piece;
 import chessboard.pieces.Queen;
 import chessboard.pieces.Rook;
-import java.awt.Point;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -103,6 +103,9 @@ public class Board {
 
     private Piece[][] pieces;
 
+    //links to both kings for easy retrieval
+    private Map&lt;Color, King&gt; kings;
+
     //a list of possible moves from this position
     private List&lt;GenericMove&gt; possibleMoves;
 
@@ -113,28 +116,10 @@ public class Board {
      * @param initialPieces the initial pieces to add to the board
      * @param active the player whose turn it is
      */
-<span class="fc" id="L116">    public Board(List&lt;Piece&gt; initialPieces, Color active) {</span>
-<span class="fc" id="L117">        initializeFields(active);</span>
-<span class="fc" id="L118">        setupPieces(initialPieces);</span>
-<span class="fc" id="L119">    }</span>
-
-    /**
-     * Helper method which locates the king of a specific color.
-     *
-     * @param color the color of king to locate
-     * @return the requested King
-     */
-    public King findKing(Color color) {
-<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (int col = 0; col &lt; Board.SQUARES_PER_SIDE; col++) {</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">            for (int row = 0; row &lt; Board.SQUARES_PER_SIDE; row++) {</span>
-<span class="fc" id="L130">                Piece occupant = occupant(col, row);</span>
-<span class="fc bfc" id="L131" title="All 6 branches covered.">                if (occupant != null &amp;&amp; occupant instanceof King &amp;&amp; occupant.color == color) {</span>
-<span class="fc" id="L132">                    return (King) occupant;</span>
-                }
-            }
-        }
-<span class="fc" id="L136">        return null;</span>
-    }
+<span class="fc" id="L119">    public Board(List&lt;Piece&gt; initialPieces, Color active) {</span>
+<span class="fc" id="L120">        initializeFields(active);</span>
+<span class="fc" id="L121">        setupPieces(initialPieces);</span>
+<span class="fc" id="L122">    }</span>
 
     /**
      * Method which returns the player whose turn it is.
@@ -142,15 +127,15 @@ public class Board {
      * @return the color whose turn it is
      */
     public Color activePlayer() {
-<span class="fc" id="L145">        return activePlayer;</span>
+<span class="fc" id="L130">        return activePlayer;</span>
     }
 
     /**
      * Method which changes control of the turn to the next player.
      */
     public void passTurn() {
-<span class="fc" id="L152">        activePlayer = activePlayer.enemy();</span>
-<span class="fc" id="L153">    }</span>
+<span class="fc" id="L137">        activePlayer = activePlayer.enemy();</span>
+<span class="fc" id="L138">    }</span>
 
     /**
      * Method which returns the occupant of the given position.
@@ -160,7 +145,7 @@ public class Board {
      * @return the Piece at the passed position
      */
     public Piece occupant(int xPosition, int yPosition) {
-<span class="fc" id="L163">        return pieces[xPosition][yPosition];</span>
+<span class="fc" id="L148">        return pieces[xPosition][yPosition];</span>
     }
 
     /**
@@ -171,8 +156,21 @@ public class Board {
      * @param occupant the Piece to set in the position
      */
     public void setOccupant(int xPosition, int yPosition, Piece occupant) {
-<span class="fc" id="L174">        pieces[xPosition][yPosition] = occupant;</span>
-<span class="fc" id="L175">    }</span>
+<span class="fc" id="L159">        pieces[xPosition][yPosition] = occupant;</span>
+<span class="fc" id="L160">    }</span>
+
+    /**
+     * Helper method which locates the king of a specific color.
+     *
+     * @param color the color of king to locate
+     * @return the requested King
+     */
+    public King findKing(Color color) {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if (kings.containsKey(color)) {</span>
+<span class="fc" id="L170">            return kings.get(color);</span>
+        }
+<span class="fc" id="L172">        return null;</span>
+    }
 
     /**
      * Method which returns a list of past moves made on the board.
@@ -180,19 +178,27 @@ public class Board {
      * @return a list of past moves made on the board
      */
     public GenericMove lastMove() {
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (moveHistory.isEmpty()) {</span>
-<span class="fc" id="L184">            return null;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (moveHistory.isEmpty()) {</span>
+<span class="fc" id="L182">            return null;</span>
         }
-<span class="fc" id="L186">        return moveHistory.peek();</span>
+<span class="fc" id="L184">        return moveHistory.peek();</span>
     }
 
+    /**
+     * Method which removes the most recent item of move history.
+     */
     public void removeLastMove() {
-<span class="fc" id="L190">        moveHistory.pop();</span>
-<span class="fc" id="L191">    }</span>
+<span class="fc" id="L191">        moveHistory.pop();</span>
+<span class="fc" id="L192">    }</span>
 
+    /**
+     * Method which adds a move to the move history.
+     *
+     * @param move the move to add
+     */
     public void addToHistory(GenericMove move) {
-<span class="fc" id="L194">        moveHistory.add(move);</span>
-<span class="fc" id="L195">    }</span>
+<span class="fc" id="L200">        moveHistory.add(move);</span>
+<span class="fc" id="L201">    }</span>
 
     /**
      * Method which returns a list of possible moves from this board state.
@@ -200,10 +206,10 @@ public class Board {
      * @return a list of possible moves from this board state
      */
     public List&lt;GenericMove&gt; validMoves() {
-<span class="fc bfc" id="L203" title="All 2 branches covered.">        if (possibleMoves == null) {</span>
-<span class="fc" id="L204">            possibleMoves = calculatePossibleMoves(activePlayer);</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        if (possibleMoves == null) {</span>
+<span class="fc" id="L210">            possibleMoves = calculatePossibleMoves(activePlayer);</span>
         }
-<span class="fc" id="L206">        return Collections.unmodifiableList(possibleMoves);</span>
+<span class="fc" id="L212">        return Collections.unmodifiableList(possibleMoves);</span>
     }
 
     /**
@@ -211,8 +217,8 @@ public class Board {
      * recalculation.
      */
     public void resetValidMoves() {
-<span class="fc" id="L214">        possibleMoves = null;</span>
-<span class="fc" id="L215">    }</span>
+<span class="fc" id="L220">        possibleMoves = null;</span>
+<span class="fc" id="L221">    }</span>
 
     /**
      * Helper method which calculates the list of possible moves.
@@ -221,22 +227,22 @@ public class Board {
      * @return a list of possible moves in the current position
      */
     private List&lt;GenericMove&gt; calculatePossibleMoves(Color player) {
-<span class="fc" id="L224">        List&lt;GenericMove&gt; toReturn = new LinkedList&lt;&gt;();</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">        for (int col = 0; col &lt; SQUARES_PER_SIDE; col++) {</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">            for (int row = 0; row &lt; SQUARES_PER_SIDE; row++) {</span>
-<span class="fc" id="L227">                Piece occupant = occupant(col, row);</span>
-<span class="fc bfc" id="L228" title="All 4 branches covered.">                if (occupant == null || occupant.color != player) {</span>
-<span class="fc" id="L229">                    continue;</span>
+<span class="fc" id="L230">        List&lt;GenericMove&gt; toReturn = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        for (int col = 0; col &lt; SQUARES_PER_SIDE; col++) {</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">            for (int row = 0; row &lt; SQUARES_PER_SIDE; row++) {</span>
+<span class="fc" id="L233">                Piece occupant = occupant(col, row);</span>
+<span class="fc bfc" id="L234" title="All 4 branches covered.">                if (occupant == null || occupant.color != player) {</span>
+<span class="fc" id="L235">                    continue;</span>
                 }
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                for (GenericMove target : occupant.validMoves(this)) {</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">                    if (target.endangersKing()) {</span>
-<span class="fc" id="L233">                        continue;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">                for (GenericMove target : occupant.validMoves(this)) {</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">                    if (target.endangersKing()) {</span>
+<span class="fc" id="L239">                        continue;</span>
                     }
-<span class="fc" id="L235">                    toReturn.add(target);</span>
-<span class="fc" id="L236">                }</span>
+<span class="fc" id="L241">                    toReturn.add(target);</span>
+<span class="fc" id="L242">                }</span>
             }
         }
-<span class="fc" id="L239">        return toReturn;</span>
+<span class="fc" id="L245">        return toReturn;</span>
     }
 
     /**
@@ -245,11 +251,12 @@ public class Board {
      * @param active the color whose turn it is
      */
     private void initializeFields(Color active) {
-<span class="fc" id="L248">        pieces = new Piece[SQUARES_PER_SIDE][SQUARES_PER_SIDE];</span>
-<span class="fc" id="L249">        activePlayer = active;</span>
-<span class="fc" id="L250">        moveHistory = new Stack&lt;&gt;();</span>
-<span class="fc" id="L251">        possibleMoves = null;</span>
-<span class="fc" id="L252">    }</span>
+<span class="fc" id="L254">        pieces = new Piece[SQUARES_PER_SIDE][SQUARES_PER_SIDE];</span>
+<span class="fc" id="L255">        activePlayer = active;</span>
+<span class="fc" id="L256">        moveHistory = new Stack&lt;&gt;();</span>
+<span class="fc" id="L257">        possibleMoves = null;</span>
+<span class="fc" id="L258">        kings = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L259">    }</span>
 
     /**
      * Helper method which adds the inital pieces to the board.
@@ -257,9 +264,12 @@ public class Board {
      * @param initialPieces the initial pieces to add
      */
     private void setupPieces(List&lt;Piece&gt; initialPieces) {
-<span class="fc bfc" id="L260" title="All 2 branches covered.">        for (Piece piece : initialPieces) {</span>
-<span class="fc" id="L261">            pieces[piece.position().x][piece.position().y] = piece;</span>
-<span class="fc" id="L262">        }</span>
-<span class="fc" id="L263">    }</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        for (Piece piece : initialPieces) {</span>
+<span class="fc" id="L268">            pieces[piece.position().x][piece.position().y] = piece;</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">            if (piece instanceof King) {</span>
+<span class="fc" id="L270">                kings.put(piece.color, (King) piece);</span>
+            }
+<span class="fc" id="L272">        }</span>
+<span class="fc" id="L273">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

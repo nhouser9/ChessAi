@@ -5,14 +5,14 @@
  */
 package chessboard.pieces;
 
+import ai.rules.PositionalRule;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
-import chessboard.moves.Capture;
 import chessboard.moves.GenericMove;
 import chessboard.moves.MoveFactory;
-import chessboard.moves.NormalMove;
 import java.awt.Point;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -32,6 +32,9 @@ public abstract class Piece {
     //variable indicating whether this piece has moved
     private int moveCount;
 
+    //a list of positional rules applying to this piece
+    private List&lt;PositionalRule&gt; positionalRules;
+
     /**
      * Constructor which saves the color of the peice.
      *
@@ -39,11 +42,13 @@ public abstract class Piece {
      * @param xPosition the initial x position
      * @param yPosition the initial y position
      */
-<span class="fc" id="L42">    public Piece(Color color, int xPosition, int yPosition) {</span>
-<span class="fc" id="L43">        this.color = color;</span>
-<span class="fc" id="L44">        position = new Point(xPosition, yPosition);</span>
-<span class="fc" id="L45">        moveCount = 0;</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L45">    public Piece(Color color, int xPosition, int yPosition) {</span>
+<span class="fc" id="L46">        this.color = color;</span>
+<span class="fc" id="L47">        position = new Point(xPosition, yPosition);</span>
+<span class="fc" id="L48">        moveCount = 0;</span>
+<span class="fc" id="L49">        positionalRules = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L50">        addPositionalRules();</span>
+<span class="fc" id="L51">    }</span>
 
     /**
      * Getter method for position.
@@ -51,7 +56,7 @@ public abstract class Piece {
      * @return the position of the piece
      */
     public Point position() {
-<span class="fc" id="L54">        return position;</span>
+<span class="fc" id="L59">        return position;</span>
     }
 
     /**
@@ -60,22 +65,22 @@ public abstract class Piece {
      * @param newPos the new position
      */
     public void setPosition(Point newPos) {
-<span class="fc" id="L63">        position = newPos;</span>
-<span class="fc" id="L64">    }</span>
+<span class="fc" id="L68">        position = newPos;</span>
+<span class="fc" id="L69">    }</span>
 
     /**
      * Method which adds one to the move count.
      */
     public void addMoveCount() {
-<span class="fc" id="L70">        moveCount = moveCount + 1;</span>
-<span class="fc" id="L71">    }</span>
+<span class="fc" id="L75">        moveCount = moveCount + 1;</span>
+<span class="fc" id="L76">    }</span>
 
     /**
      * Method which subtracts one from the move count.
      */
     public void subMoveCount() {
-<span class="fc" id="L77">        moveCount = moveCount - 1;</span>
-<span class="fc" id="L78">    }</span>
+<span class="fc" id="L82">        moveCount = moveCount - 1;</span>
+<span class="fc" id="L83">    }</span>
 
     /**
      * Checks whether this piece has been moved.
@@ -83,7 +88,7 @@ public abstract class Piece {
      * @return true if the piece has moved, false otherwise
      */
     public boolean hasMoved() {
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        return moveCount &gt; 0;</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        return moveCount &gt; 0;</span>
     }
 
     /**
@@ -95,6 +100,45 @@ public abstract class Piece {
     public abstract List&lt;GenericMove&gt; validMoves(Board board);
 
     /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    public abstract double materialValue();
+
+    /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    public abstract void addPositionalRules();
+
+    /**
+     * Helper method which adds a rule to the list of positional rules.
+     *
+     * @param rule the rule to add
+     */
+    protected void addPositionalRule(PositionalRule rule) {
+<span class="fc" id="L121">        positionalRules.add(rule);</span>
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Method wich returns the positional value for the piece, which is a number
+     * representing the positional strength of the piece. For example, a knight
+     * on the edge of the board has less positional value than one in the
+     * center.
+     *
+     * @param board the game board
+     * @return the positional value of the piece
+     */
+    public double positionalValue(Board board) {
+<span class="fc" id="L134">        double toReturn = 0.0;</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for (PositionalRule rule : positionalRules) {</span>
+<span class="fc" id="L136">            toReturn = toReturn + rule.count(this, board) * rule.value();</span>
+<span class="fc" id="L137">        }</span>
+<span class="fc" id="L138">        return toReturn;</span>
+    }
+
+    /**
      * Helper method which adds all of the moves for a Piece in one straight
      * direction.
      *
@@ -103,22 +147,22 @@ public abstract class Piece {
      * @param direction the direction in to search for moves
      */
     protected void addDirectionalMoves(List&lt;GenericMove&gt; moves, Board board, Direction direction) {
-<span class="fc" id="L106">        int col = position().x + direction.x();</span>
-<span class="fc" id="L107">        int row = position().y + direction.y();</span>
+<span class="fc" id="L150">        int col = position().x + direction.x();</span>
+<span class="fc" id="L151">        int row = position().y + direction.y();</span>
 
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        while (Board.inBounds(col, row)) {</span>
-<span class="fc" id="L110">            Piece occupant = board.occupant(col, row);</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (occupant != null) {</span>
-<span class="fc" id="L112">                MoveFactory.addIfValid(moves, board, this, col, row, true, true);</span>
-<span class="fc" id="L113">                break;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        while (Board.inBounds(col, row)) {</span>
+<span class="fc" id="L154">            Piece occupant = board.occupant(col, row);</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            if (occupant != null) {</span>
+<span class="fc" id="L156">                MoveFactory.addIfValid(moves, board, this, col, row, true, true);</span>
+<span class="fc" id="L157">                break;</span>
             }
 
-<span class="fc" id="L116">            MoveFactory.addIfValid(moves, board, this, col, row, true, true);</span>
+<span class="fc" id="L160">            MoveFactory.addIfValid(moves, board, this, col, row, true, true);</span>
 
-<span class="fc" id="L118">            col = col + direction.x();</span>
-<span class="fc" id="L119">            row = row + direction.y();</span>
-<span class="fc" id="L120">        }</span>
-<span class="fc" id="L121">    }</span>
+<span class="fc" id="L162">            col = col + direction.x();</span>
+<span class="fc" id="L163">            row = row + direction.y();</span>
+<span class="fc" id="L164">        }</span>
+<span class="fc" id="L165">    }</span>
 
     /**
      * Checks whether this piece is equal to another.
@@ -128,25 +172,25 @@ public abstract class Piece {
      */
     @Override
     public boolean equals(Object other) {
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        if (other.getClass() != getClass()) {</span>
-<span class="fc" id="L132">            return false;</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (other.getClass() != getClass()) {</span>
+<span class="fc" id="L176">            return false;</span>
         }
 
-<span class="fc" id="L135">        Piece otherPiece = (Piece) other;</span>
+<span class="fc" id="L179">        Piece otherPiece = (Piece) other;</span>
 
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (otherPiece.color != color) {</span>
-<span class="fc" id="L138">            return false;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (otherPiece.color != color) {</span>
+<span class="fc" id="L182">            return false;</span>
         }
 
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (!otherPiece.position().equals(position)) {</span>
-<span class="fc" id="L142">            return false;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (!otherPiece.position().equals(position)) {</span>
+<span class="fc" id="L186">            return false;</span>
         }
 
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        if (otherPiece.moveCount != moveCount) {</span>
-<span class="fc" id="L146">            return false;</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (otherPiece.moveCount != moveCount) {</span>
+<span class="fc" id="L190">            return false;</span>
         }
 
-<span class="fc" id="L149">        return true;</span>
+<span class="fc" id="L193">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

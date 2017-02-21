@@ -8,6 +8,7 @@ package ai;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.moves.GenericMove;
+import chessboard.pieces.Piece;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;

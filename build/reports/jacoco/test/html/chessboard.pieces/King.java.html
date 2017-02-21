@@ -8,11 +8,9 @@ package chessboard.pieces;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
-import chessboard.moves.Capture;
 import java.util.ArrayList;
 import chessboard.moves.GenericMove;
 import chessboard.moves.MoveFactory;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,8 +29,8 @@ public class King extends Piece {
      * @param yPosition the initial y position
      */
     public King(Color color, int xPosition, int yPosition) {
-<span class="fc" id="L34">        super(color, xPosition, yPosition);</span>
-<span class="fc" id="L35">    }</span>
+<span class="fc" id="L32">        super(color, xPosition, yPosition);</span>
+<span class="fc" id="L33">    }</span>
 
     /**
      * Method which returns a list of valid moves for the King. Kings can move
@@ -43,26 +41,44 @@ public class King extends Piece {
      */
     @Override
     public List&lt;GenericMove&gt; validMoves(Board board) {
-<span class="fc" id="L46">        List&lt;GenericMove&gt; toReturn = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L44">        List&lt;GenericMove&gt; toReturn = new ArrayList&lt;&gt;();</span>
         int addX;
         int addY;
 
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        for (Direction dir : Direction.values()) {</span>
-<span class="fc" id="L51">            addX = position().x + dir.x();</span>
-<span class="fc" id="L52">            addY = position().y + dir.y();</span>
-<span class="fc" id="L53">            MoveFactory.addIfValid(toReturn, board, this, addX, addY, true, true);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (Direction dir : Direction.values()) {</span>
+<span class="fc" id="L49">            addX = position().x + dir.x();</span>
+<span class="fc" id="L50">            addY = position().y + dir.y();</span>
+<span class="fc" id="L51">            MoveFactory.addIfValid(toReturn, board, this, addX, addY, true, true);</span>
         }
 
-<span class="fc" id="L56">        Direction[] castleDirs = {Direction.EAST, Direction.WEST};</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        for (Direction castleDir : castleDirs) {</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">            if (canCastle(board, castleDir)) {</span>
-<span class="fc" id="L59">                addX = position().x + (2 * castleDir.x());</span>
-<span class="fc" id="L60">                addY = position().y;</span>
-<span class="fc" id="L61">                MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);</span>
+<span class="fc" id="L54">        Direction[] castleDirs = {Direction.EAST, Direction.WEST};</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        for (Direction castleDir : castleDirs) {</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (canCastle(board, castleDir)) {</span>
+<span class="fc" id="L57">                addX = position().x + (2 * castleDir.x());</span>
+<span class="fc" id="L58">                addY = position().y;</span>
+<span class="fc" id="L59">                MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);</span>
             }
         }
 
-<span class="fc" id="L65">        return toReturn;</span>
+<span class="fc" id="L63">        return toReturn;</span>
+    }
+
+    /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    @Override
+    public void addPositionalRules() {
+<span class="fc" id="L71">    }</span>
+
+    /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    @Override
+    public double materialValue() {
+<span class="fc" id="L81">        return 0.0;</span>
     }
 
     /**
@@ -74,69 +90,69 @@ public class King extends Piece {
      */
     public boolean threatened(Board board) {
         //knights
-<span class="fc" id="L77">        int[] ones = {-1, 1};</span>
-<span class="fc" id="L78">        int[] twos = {-2, 2};</span>
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (int one : ones) {</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">            for (int two : twos) {</span>
+<span class="fc" id="L93">        int[] ones = {-1, 1};</span>
+<span class="fc" id="L94">        int[] twos = {-2, 2};</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        for (int one : ones) {</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">            for (int two : twos) {</span>
                 Piece occupant;
-<span class="fc bfc" id="L82" title="All 2 branches covered.">                if (Board.inBounds(position().x + one, position().y + two)) {</span>
-<span class="fc" id="L83">                    occupant = board.occupant(position().x + one, position().y + two);</span>
-<span class="pc bpc" id="L84" title="1 of 6 branches missed.">                    if (occupant != null &amp;&amp; occupant instanceof Knight &amp;&amp; occupant.color != color) {</span>
-<span class="nc" id="L85">                        return true;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                if (Board.inBounds(position().x + one, position().y + two)) {</span>
+<span class="fc" id="L99">                    occupant = board.occupant(position().x + one, position().y + two);</span>
+<span class="pc bpc" id="L100" title="1 of 6 branches missed.">                    if (occupant != null &amp;&amp; occupant instanceof Knight &amp;&amp; occupant.color != color) {</span>
+<span class="nc" id="L101">                        return true;</span>
                     }
                 }
-<span class="fc bfc" id="L88" title="All 2 branches covered.">                if (Board.inBounds(position().x + two, position().y + one)) {</span>
-<span class="fc" id="L89">                    occupant = board.occupant(position().x + two, position().y + one);</span>
-<span class="pc bpc" id="L90" title="3 of 6 branches missed.">                    if (occupant != null &amp;&amp; occupant instanceof Knight &amp;&amp; occupant.color != color) {</span>
-<span class="nc" id="L91">                        return true;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                if (Board.inBounds(position().x + two, position().y + one)) {</span>
+<span class="fc" id="L105">                    occupant = board.occupant(position().x + two, position().y + one);</span>
+<span class="pc bpc" id="L106" title="3 of 6 branches missed.">                    if (occupant != null &amp;&amp; occupant instanceof Knight &amp;&amp; occupant.color != color) {</span>
+<span class="nc" id="L107">                        return true;</span>
                     }
                 }
             }
         }
 
         //pieces in straight lines from king
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (Direction direction : Direction.values()) {</span>
-<span class="fc" id="L99">            int col = position().x + direction.x();</span>
-<span class="fc" id="L100">            int row = position().y + direction.y();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        for (Direction direction : Direction.values()) {</span>
+<span class="fc" id="L115">            int col = position().x + direction.x();</span>
+<span class="fc" id="L116">            int row = position().y + direction.y();</span>
 
-<span class="fc bfc" id="L102" title="All 2 branches covered.">            while (Board.inBounds(col, row)) {</span>
-<span class="fc" id="L103">                Piece occupant = board.occupant(col, row);</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">                if (occupant != null) {</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">                    if (occupant.color != color) {</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">                        if (occupant instanceof Queen) {</span>
-<span class="fc" id="L107">                            return true;</span>
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                        } else if (occupant instanceof King) {</span>
-<span class="nc" id="L109">                            int deltaX = Math.abs(occupant.position().x - position().x);</span>
-<span class="nc" id="L110">                            int deltaY = Math.abs(occupant.position().y - position().y);</span>
-<span class="nc bnc" id="L111" title="All 4 branches missed.">                            if (deltaX &lt;= 1 &amp;&amp; deltaY &lt;= 1) {</span>
-<span class="nc" id="L112">                                return true;</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            while (Board.inBounds(col, row)) {</span>
+<span class="fc" id="L119">                Piece occupant = board.occupant(col, row);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                if (occupant != null) {</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                    if (occupant.color != color) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                        if (occupant instanceof Queen) {</span>
+<span class="fc" id="L123">                            return true;</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">                        } else if (occupant instanceof King) {</span>
+<span class="nc" id="L125">                            int deltaX = Math.abs(occupant.position().x - position().x);</span>
+<span class="nc" id="L126">                            int deltaY = Math.abs(occupant.position().y - position().y);</span>
+<span class="nc bnc" id="L127" title="All 4 branches missed.">                            if (deltaX &lt;= 1 &amp;&amp; deltaY &lt;= 1) {</span>
+<span class="nc" id="L128">                                return true;</span>
                             }
-<span class="pc bfc" id="L114" title="All 2 branches covered.">                        } else if (occupant instanceof Pawn) {</span>
-<span class="fc" id="L115">                            int deltaX = Math.abs(occupant.position().x - position().x);</span>
-<span class="fc" id="L116">                            int yAfterCapture = occupant.position().y + occupant.color.forwardDirection().y();</span>
-<span class="pc bpc" id="L117" title="3 of 4 branches missed.">                            if (yAfterCapture == position().y &amp;&amp; deltaX == 1) {</span>
-<span class="nc" id="L118">                                return true;</span>
+<span class="pc bfc" id="L130" title="All 2 branches covered.">                        } else if (occupant instanceof Pawn) {</span>
+<span class="fc" id="L131">                            int deltaX = Math.abs(occupant.position().x - position().x);</span>
+<span class="fc" id="L132">                            int yAfterCapture = occupant.position().y + occupant.color.forwardDirection().y();</span>
+<span class="pc bpc" id="L133" title="3 of 4 branches missed.">                            if (yAfterCapture == position().y &amp;&amp; deltaX == 1) {</span>
+<span class="nc" id="L134">                                return true;</span>
                             }
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                        } else if (occupant instanceof Rook) {</span>
-<span class="fc bfc" id="L121" title="All 8 branches covered.">                            if (direction == Direction.NORTH || direction == Direction.SOUTH || direction == Direction.EAST || direction == Direction.WEST) {</span>
-<span class="fc" id="L122">                                return true;</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                        } else if (occupant instanceof Rook) {</span>
+<span class="fc bfc" id="L137" title="All 8 branches covered.">                            if (direction == Direction.NORTH || direction == Direction.SOUTH || direction == Direction.EAST || direction == Direction.WEST) {</span>
+<span class="fc" id="L138">                                return true;</span>
                             }
-<span class="nc bnc" id="L124" title="All 2 branches missed.">                        } else if (occupant instanceof Bishop) {</span>
-<span class="nc bnc" id="L125" title="All 8 branches missed.">                            if (direction == Direction.NORTHWEST || direction == Direction.SOUTHWEST || direction == Direction.NORTHEAST || direction == Direction.SOUTHEAST) {</span>
-<span class="nc" id="L126">                                return true;</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                        } else if (occupant instanceof Bishop) {</span>
+<span class="nc bnc" id="L141" title="All 8 branches missed.">                            if (direction == Direction.NORTHWEST || direction == Direction.SOUTHWEST || direction == Direction.NORTHEAST || direction == Direction.SOUTHEAST) {</span>
+<span class="nc" id="L142">                                return true;</span>
                             }
                         }
                     }
                     break;
                 }
 
-<span class="fc" id="L133">                col = col + direction.x();</span>
-<span class="fc" id="L134">                row = row + direction.y();</span>
-<span class="fc" id="L135">            }</span>
+<span class="fc" id="L149">                col = col + direction.x();</span>
+<span class="fc" id="L150">                row = row + direction.y();</span>
+<span class="fc" id="L151">            }</span>
         }
 
         //nothing was threatening
-<span class="fc" id="L139">        return false;</span>
+<span class="fc" id="L155">        return false;</span>
     }
 
     /**
@@ -151,41 +167,41 @@ public class King extends Piece {
      * @throws IllegalArgumentException if passed a direction not east or west
      */
     private boolean canCastle(Board board, Direction direction) {
-<span class="pc bpc" id="L154" title="1 of 4 branches missed.">        if (direction != Direction.WEST &amp;&amp; direction != Direction.EAST) {</span>
-<span class="nc" id="L155">            throw new IllegalArgumentException(&quot;Tried to castle in a direction other than left or right.&quot;);</span>
+<span class="pc bpc" id="L170" title="1 of 4 branches missed.">        if (direction != Direction.WEST &amp;&amp; direction != Direction.EAST) {</span>
+<span class="nc" id="L171">            throw new IllegalArgumentException(&quot;Tried to castle in a direction other than left or right.&quot;);</span>
         }
 
-<span class="fc" id="L158">        int xIndex = 4;</span>
-<span class="pc bpc" id="L159" title="1 of 4 branches missed.">        if (position().x != xIndex || position().y != color.homeRow()) {</span>
-<span class="fc" id="L160">            return false;</span>
+<span class="fc" id="L174">        int xIndex = 4;</span>
+<span class="pc bpc" id="L175" title="1 of 4 branches missed.">        if (position().x != xIndex || position().y != color.homeRow()) {</span>
+<span class="fc" id="L176">            return false;</span>
         }
 
-<span class="fc bfc" id="L163" title="All 2 branches covered.">        if (hasMoved()) {</span>
-<span class="fc" id="L164">            return false;</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if (hasMoved()) {</span>
+<span class="fc" id="L180">            return false;</span>
         }
 
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        while (Board.inBounds(xIndex + (2 * direction.x()), 0)) {</span>
-<span class="fc" id="L168">            xIndex = xIndex + direction.x();</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">            if (board.occupant(xIndex, color.homeRow()) != null) {</span>
-<span class="fc" id="L170">                return false;</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        while (Board.inBounds(xIndex + (2 * direction.x()), 0)) {</span>
+<span class="fc" id="L184">            xIndex = xIndex + direction.x();</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            if (board.occupant(xIndex, color.homeRow()) != null) {</span>
+<span class="fc" id="L186">                return false;</span>
             }
         }
 
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        if (MoveFactory.create(board, this, position().x, position().y).endangersKing()) {</span>
-<span class="fc" id="L175">            return false;</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if (MoveFactory.create(board, this, position().x, position().y).endangersKing()) {</span>
+<span class="fc" id="L191">            return false;</span>
         }
 
-<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (MoveFactory.create(board, this, position().x + direction.x(), position().y).endangersKing()) {</span>
-<span class="fc" id="L179">            return false;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if (MoveFactory.create(board, this, position().x + direction.x(), position().y).endangersKing()) {</span>
+<span class="fc" id="L195">            return false;</span>
         }
 
-<span class="fc" id="L182">        xIndex = xIndex + direction.x();</span>
-<span class="fc" id="L183">        Piece rookSquareOccupant = board.occupant(xIndex, color.homeRow());</span>
-<span class="pc bpc" id="L184" title="1 of 4 branches missed.">        if (rookSquareOccupant == null || rookSquareOccupant.hasMoved()) {</span>
-<span class="fc" id="L185">            return false;</span>
+<span class="fc" id="L198">        xIndex = xIndex + direction.x();</span>
+<span class="fc" id="L199">        Piece rookSquareOccupant = board.occupant(xIndex, color.homeRow());</span>
+<span class="pc bpc" id="L200" title="1 of 4 branches missed.">        if (rookSquareOccupant == null || rookSquareOccupant.hasMoved()) {</span>
+<span class="fc" id="L201">            return false;</span>
         }
 
-<span class="fc" id="L188">        return true;</span>
+<span class="fc" id="L204">        return true;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

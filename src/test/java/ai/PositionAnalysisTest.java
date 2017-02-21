@@ -7,11 +7,7 @@ package ai;
 
 import chessboard.Board;
 import chessboard.Color;
-import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
-import chessboard.pieces.Knight;
-import chessboard.pieces.Pawn;
-import chessboard.pieces.Queen;
 import chessboard.pieces.Rook;
 import java.awt.Point;
 import java.util.LinkedList;
@@ -24,44 +20,14 @@ import static org.mockito.Mockito.when;
 public class PositionAnalysisTest {
 
     @Test
-    public void constructor_valuesPawns() {
+    public void constructor_addsMaterialAndPositionalValues() {
+        Rook testRook = new Rook(Color.WHITE, 0, 0);
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(0, 0)).thenReturn(new Pawn(Color.BLACK, 0, 0));
+        when(fakeBoard.occupant(0, 0)).thenReturn(testRook);
 
-        assertTrue(new PositionAnalysis(fakeBoard).value == 0 - new Pawn(Color.BLACK, 0, 0).materialValue());
-    }
+        PositionAnalysis test = new PositionAnalysis(fakeBoard);
 
-    @Test
-    public void constructor_valuesRooks() {
-        Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(0, 0)).thenReturn(new Rook(Color.WHITE, 0, 0));
-
-        assertTrue(new PositionAnalysis(fakeBoard).value == new Rook(Color.WHITE, 0, 0).materialValue());
-    }
-
-    @Test
-    public void constructor_valuesQueens() {
-        Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(0, 0)).thenReturn(new Queen(Color.BLACK, 0, 0));
-        when(fakeBoard.occupant(0, 1)).thenReturn(new Queen(Color.BLACK, 0, 1));
-
-        assertTrue(new PositionAnalysis(fakeBoard).value == 2 * (0 - new Queen(Color.BLACK, 0, 0).materialValue()));
-    }
-
-    @Test
-    public void constructor_valuesKnights() {
-        Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(0, 0)).thenReturn(new Knight(Color.WHITE, 0, 0));
-
-        assertTrue(new PositionAnalysis(fakeBoard).value == new Knight(Color.WHITE, 0, 0).materialValue());
-    }
-
-    @Test
-    public void constructor_valuesBishops() {
-        Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(0, 0)).thenReturn(new Bishop(Color.BLACK, 0, 0));
-
-        assertTrue(new PositionAnalysis(fakeBoard).value == 0 - new Bishop(Color.BLACK, 0, 0).materialValue());
+        assertTrue(test.value == testRook.positionalValue(fakeBoard) + testRook.materialValue());
     }
 
     @Test
