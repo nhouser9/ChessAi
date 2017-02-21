@@ -35,6 +35,24 @@ public class Pawn extends Piece {
     }
 
     /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    @Override
+    public void addPositionalRules() {
+    }
+
+    /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    @Override
+    public double materialValue() {
+        return 1.0;
+    }
+
+    /**
      * Method which returns a list of valid moves for the Pawn. Pawns can move
      * only forward one square at a time, except for on the first move, on which
      * they can move two squares. Pawns cannot capture while moving forward,

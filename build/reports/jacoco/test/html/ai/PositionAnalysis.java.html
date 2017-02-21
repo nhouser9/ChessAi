@@ -51,12 +51,12 @@ public class PositionAnalysis {
 <span class="fc" id="L51">    }</span>
 
     private double addCheckmateValue(Board toAnalyze) {
-<span class="fc" id="L54">        Color active = toAnalyze.getActivePlayer();</span>
+<span class="fc" id="L54">        Color active = toAnalyze.activePlayer();</span>
 <span class="fc" id="L55">        King activeKing = toAnalyze.findKing(active);</span>
 <span class="fc bfc" id="L56" title="All 2 branches covered.">        if (activeKing == null) {</span>
 <span class="fc" id="L57">            return 0;</span>
         }
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (!toAnalyze.kingThreatened(activeKing)) {</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (!activeKing.threatened(toAnalyze)) {</span>
 <span class="fc" id="L60">            return 0;</span>
         }
 <span class="fc bfc" id="L62" title="All 2 branches covered.">        for (GenericMove kingMove : activeKing.validMoves(toAnalyze)) {</span>

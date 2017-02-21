@@ -5,14 +5,14 @@
  */
 package chessboard.pieces;
 
+import ai.rules.PositionalRule;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
-import chessboard.moves.Capture;
 import chessboard.moves.GenericMove;
 import chessboard.moves.MoveFactory;
-import chessboard.moves.NormalMove;
 import java.awt.Point;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -32,6 +32,9 @@ public abstract class Piece {
     //variable indicating whether this piece has moved
     private int moveCount;
 
+    //a list of positional rules applying to this piece
+    private List<PositionalRule> positionalRules;
+
     /**
      * Constructor which saves the color of the peice.
      *
@@ -43,6 +46,8 @@ public abstract class Piece {
         this.color = color;
         position = new Point(xPosition, yPosition);
         moveCount = 0;
+        positionalRules = new LinkedList<>();
+        addPositionalRules();
     }
 
     /**
@@ -93,6 +98,45 @@ public abstract class Piece {
      * @return a list of valid moves for the piece
      */
     public abstract List<GenericMove> validMoves(Board board);
+
+    /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    public abstract double materialValue();
+
+    /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    public abstract void addPositionalRules();
+
+    /**
+     * Helper method which adds a rule to the list of positional rules.
+     *
+     * @param rule the rule to add
+     */
+    protected void addPositionalRule(PositionalRule rule) {
+        positionalRules.add(rule);
+    }
+
+    /**
+     * Method wich returns the positional value for the piece, which is a number
+     * representing the positional strength of the piece. For example, a knight
+     * on the edge of the board has less positional value than one in the
+     * center.
+     *
+     * @param board the game board
+     * @return the positional value of the piece
+     */
+    public double positionalValue(Board board) {
+        double toReturn = 0.0;
+        for (PositionalRule rule : positionalRules) {
+            toReturn = toReturn + rule.count(this, board) * rule.value();
+        }
+        return toReturn;
+    }
 
     /**
      * Helper method which adds all of the moves for a Piece in one straight

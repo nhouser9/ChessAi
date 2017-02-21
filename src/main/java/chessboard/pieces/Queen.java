@@ -5,11 +5,11 @@
  */
 package chessboard.pieces;
 
+import ai.rules.NumberOfMoves;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
 import chessboard.moves.GenericMove;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,4 +50,22 @@ public class Queen extends Piece {
         return toReturn;
     }
 
+    /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    @Override
+    public void addPositionalRules() {
+        addPositionalRule(new NumberOfMoves());
+    }
+
+    /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    @Override
+    public double materialValue() {
+        return 3.0;
+    }
 }

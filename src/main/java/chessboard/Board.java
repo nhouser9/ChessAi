@@ -6,8 +6,6 @@
 package chessboard;
 
 import chessboard.moves.GenericMove;
-import chessboard.moves.MoveFactory;
-import chessboard.moves.NormalMove;
 import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
 import chessboard.pieces.Knight;
@@ -15,10 +13,11 @@ import chessboard.pieces.Pawn;
 import chessboard.pieces.Piece;
 import chessboard.pieces.Queen;
 import chessboard.pieces.Rook;
-import java.awt.Point;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -104,6 +103,9 @@ public class Board {
 
     private Piece[][] pieces;
 
+    //links to both kings for easy retrieval
+    private Map<Color, King> kings;
+
     //a list of possible moves from this position
     private List<GenericMove> possibleMoves;
 
@@ -120,85 +122,11 @@ public class Board {
     }
 
     /**
-     * Method which checks whether the active player can castle, which should be
-     * true only if neither the king nor the left rook has moved, the king is
-     * not in check, and the space to the side of the king is not under threat,
-     * and none of the spaces required are occupied.
-     *
-     * @param direction the direction in which to castle; must be east or west
-     * @param kingColor the color of the king trying to castle
-     * @return true if the active player can castle left, false otherwise
-     */
-    public boolean canCastle(Direction direction, Color kingColor) {
-        if (kingColor != activePlayer) {
-            return false;
-        }
-
-        if (direction != Direction.WEST && direction != Direction.EAST) {
-            return false;
-        }
-
-        int xIndex = 4;
-        Point kingPoint = new Point(xIndex, activePlayer.homeRow());
-        Piece kingSquareOccupant = occupant(kingPoint.x, kingPoint.y);
-        if (kingSquareOccupant == null || kingSquareOccupant.hasMoved()) {
-            return false;
-        }
-
-        xIndex = xIndex + direction.x();
-        if (occupant(xIndex, activePlayer.homeRow()) != null) {
-            return false;
-        }
-
-        xIndex = xIndex + direction.x();
-        if (occupant(xIndex, activePlayer.homeRow()) != null) {
-            return false;
-        }
-
-        if (MoveFactory.create(this, kingSquareOccupant, kingPoint.x, kingPoint.y).endangersKing()) {
-            return false;
-        }
-
-        kingPoint = new Point(kingPoint.x + direction.x(), kingPoint.y);
-        if (MoveFactory.create(this, kingSquareOccupant, kingPoint.x, kingPoint.y).endangersKing()) {
-            return false;
-        }
-
-        while (inBounds(xIndex + direction.x(), 0)) {
-            xIndex = xIndex + direction.x();
-        }
-        Piece rookSquareOccupant = occupant(xIndex, activePlayer.homeRow());
-        if (rookSquareOccupant == null || rookSquareOccupant.hasMoved()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Helper method which locates the king of a specific color.
-     *
-     * @param color the color of king to locate
-     * @return the requested King
-     */
-    public King findKing(Color color) {
-        for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
-            for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-                Piece occupant = occupant(col, row);
-                if (occupant != null && occupant instanceof King && occupant.color == color) {
-                    return (King) occupant;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Method which returns the player whose turn it is.
      *
      * @return the color whose turn it is
      */
-    public Color getActivePlayer() {
+    public Color activePlayer() {
         return activePlayer;
     }
 
@@ -207,78 +135,6 @@ public class Board {
      */
     public void passTurn() {
         activePlayer = activePlayer.enemy();
-    }
-
-    /**
-     * Method which checks the current board state for the king being
-     * threatened. This is used to determine move validity.
-     *
-     * @param toCheck the King whose safety should be checked
-     * @return true if the king is under threat, false otherwise
-     */
-    public boolean kingThreatened(King toCheck) {
-        //knights
-        Piece occupant;
-        Point[] potentialKnightThreats = {
-            new Point(toCheck.position().x - 2, toCheck.position().y - 1),
-            new Point(toCheck.position().x - 1, toCheck.position().y - 2),
-            new Point(toCheck.position().x + 2, toCheck.position().y - 1),
-            new Point(toCheck.position().x + 1, toCheck.position().y - 2),
-            new Point(toCheck.position().x - 2, toCheck.position().y + 1),
-            new Point(toCheck.position().x - 1, toCheck.position().y + 2),
-            new Point(toCheck.position().x + 2, toCheck.position().y + 1),
-            new Point(toCheck.position().x + 1, toCheck.position().y + 2)
-        };
-        for (Point potentialKnightThreat : potentialKnightThreats) {
-            if (inBounds(potentialKnightThreat.x, potentialKnightThreat.y)) {
-                occupant = occupant(potentialKnightThreat.x, potentialKnightThreat.y);
-                if (occupant != null && occupant instanceof Knight && occupant.color != toCheck.color) {
-                    return true;
-                }
-            }
-        }
-
-        //pawns, bishops, rooks, queens, and kings
-        for (Direction dir : Direction.values()) {
-            int col = toCheck.position().x + dir.x();
-            int row = toCheck.position().y + dir.y();
-            occupant = null;
-            while (inBounds(col, row)) {
-                if (occupant(col, row) != null) {
-                    occupant = occupant(col, row);
-                    break;
-                }
-                col = col + dir.x();
-                row = row + dir.y();
-            }
-            if (occupant != null && occupant.color != toCheck.color) {
-                if (occupant instanceof Queen) {
-                    return true;
-                } else if (occupant instanceof King) {
-                    int deltaX = Math.abs(occupant.position().x - toCheck.position().x);
-                    int deltaY = Math.abs(occupant.position().y - toCheck.position().y);
-                    if (deltaX <= 1 & deltaY <= 1) {
-                        return true;
-                    }
-                } else if (occupant instanceof Pawn) {
-                    int deltaX = Math.abs(occupant.position().x - toCheck.position().x);
-                    int yAfterCapture = occupant.position().y + occupant.color.forwardDirection().y();
-                    if (yAfterCapture == toCheck.position().y && deltaX == 1) {
-                        return true;
-                    }
-                } else if (occupant instanceof Rook) {
-                    if (dir == Direction.NORTH || dir == Direction.SOUTH || dir == Direction.EAST || dir == Direction.WEST) {
-                        return true;
-                    }
-                } else if (occupant instanceof Bishop) {
-                    if (dir == Direction.NORTHWEST || dir == Direction.SOUTHWEST || dir == Direction.NORTHEAST || dir == Direction.SOUTHEAST) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -304,6 +160,19 @@ public class Board {
     }
 
     /**
+     * Helper method which locates the king of a specific color.
+     *
+     * @param color the color of king to locate
+     * @return the requested King
+     */
+    public King findKing(Color color) {
+        if (kings.containsKey(color)) {
+            return kings.get(color);
+        }
+        return null;
+    }
+
+    /**
      * Method which returns a list of past moves made on the board.
      *
      * @return a list of past moves made on the board
@@ -315,10 +184,18 @@ public class Board {
         return moveHistory.peek();
     }
 
+    /**
+     * Method which removes the most recent item of move history.
+     */
     public void removeLastMove() {
         moveHistory.pop();
     }
 
+    /**
+     * Method which adds a move to the move history.
+     *
+     * @param move the move to add
+     */
     public void addToHistory(GenericMove move) {
         moveHistory.add(move);
     }
@@ -378,6 +255,7 @@ public class Board {
         activePlayer = active;
         moveHistory = new Stack<>();
         possibleMoves = null;
+        kings = new HashMap<>();
     }
 
     /**
@@ -388,6 +266,9 @@ public class Board {
     private void setupPieces(List<Piece> initialPieces) {
         for (Piece piece : initialPieces) {
             pieces[piece.position().x][piece.position().y] = piece;
+            if (piece instanceof King) {
+                kings.put(piece.color, (King) piece);
+            }
         }
     }
 }

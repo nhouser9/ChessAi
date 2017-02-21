@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.AnalysisNodeTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2017-02-20T08:29:19" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.982">
+<testsuite name="ai.AnalysisNodeTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2017-02-20T20:00:55" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.834">
   <properties/>
-  <testcase name="addChild_addsAChild" classname="ai.AnalysisNodeTest" time="0.959"/>
-  <testcase name="removeChild_removesAChild" classname="ai.AnalysisNodeTest" time="0.009"/>
-  <testcase name="constructor_setsValueToPositionValue" classname="ai.AnalysisNodeTest" time="0.004"/>
+  <testcase name="addChild_setsParentOfChild" classname="ai.AnalysisNodeTest" time="0.809"/>
+  <testcase name="addChild_addsAChild" classname="ai.AnalysisNodeTest" time="0.008"/>
+  <testcase name="constructor_setsValueToPositionValue" classname="ai.AnalysisNodeTest" time="0.003"/>
   <testcase name="constructor_setsWorstCaseValueToZero" classname="ai.AnalysisNodeTest" time="0.004"/>
-  <testcase name="addChild_setsParentOfChild" classname="ai.AnalysisNodeTest" time="0.006"/>
+  <testcase name="removeChild_removesAChild" classname="ai.AnalysisNodeTest" time="0.006"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

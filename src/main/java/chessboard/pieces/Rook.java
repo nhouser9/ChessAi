@@ -5,11 +5,11 @@
  */
 package chessboard.pieces;
 
+import ai.rules.NumberOfMoves;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.Direction;
 import chessboard.moves.GenericMove;
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +30,19 @@ public class Rook extends Piece {
      */
     public Rook(Color color, int xPosition, int yPosition) {
         super(color, xPosition, yPosition);
+    }
+
+    /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    @Override
+    public void addPositionalRules() {
+        addPositionalRule(new NumberOfMoves());
+    }
+
+    @Override
+    public double materialValue() {
+        return 5.0;
     }
 
     /**

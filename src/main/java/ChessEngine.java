@@ -11,22 +11,18 @@
  * positional piece values
  * logging
  * using opponent's clock
- * switching teams
- * piece should polymorph for copyof
- * move should make the move?
  * perform deeper analysis on selected moves?
  * finish calculating capture lines?
  * reuse old tree
  * cache
  * allow user to promote into a rook
  * enforce consistency between board / piece position
- * king should have own property of king threatened
- * endangers king should be part of is valid
  */
 import gui.AppWindow;
 import javafx.application.Application;
 
 /**
+ * Main class and entry point for the app.
  *
  * @author Nick Houser
  */

@@ -8,14 +8,8 @@ package ai;
 import chessboard.Board;
 import chessboard.Color;
 import chessboard.moves.GenericMove;
-import chessboard.pieces.Bishop;
 import chessboard.pieces.King;
-import chessboard.pieces.Knight;
-import chessboard.pieces.Pawn;
 import chessboard.pieces.Piece;
-import chessboard.pieces.Queen;
-import chessboard.pieces.Rook;
-import java.awt.Point;
 
 /**
  * Class which analyzes a position and assigns it a value. This is used for
@@ -26,11 +20,6 @@ import java.awt.Point;
 public class PositionAnalysis {
 
     //values for all of the respective factors
-    protected static final double VALUE_QUEEN = 9;
-    protected static final double VALUE_PAWN = 1;
-    protected static final double VALUE_KNIGHT = 3;
-    protected static final double VALUE_BISHOP = 3;
-    protected static final double VALUE_ROOK = 5;
     protected static final double VALUE_CHECKMATE = 10000;
 
     //the value of this position
@@ -42,29 +31,28 @@ public class PositionAnalysis {
      * @param toAnalyze the board to analyze
      */
     public PositionAnalysis(Board toAnalyze) {
-        double aggregateValue = 0.0;
-        aggregateValue = aggregateValue + addCheckmateValue(toAnalyze);
-        if (aggregateValue == 0.0) {
-            aggregateValue = aggregateValue + addMaterialValues(toAnalyze);
+        if (checkMate(toAnalyze)) {
+            value = VALUE_CHECKMATE * colorFactor(toAnalyze.activePlayer().enemy());
+        } else {
+            value = pieceValues(toAnalyze);
         }
-        value = aggregateValue;
     }
 
-    private double addCheckmateValue(Board toAnalyze) {
-        Color active = toAnalyze.getActivePlayer();
+    private boolean checkMate(Board toAnalyze) {
+        Color active = toAnalyze.activePlayer();
         King activeKing = toAnalyze.findKing(active);
         if (activeKing == null) {
-            return 0;
+            return false;
         }
-        if (!toAnalyze.kingThreatened(activeKing)) {
-            return 0;
+        if (!activeKing.threatened(toAnalyze)) {
+            return false;
         }
         for (GenericMove kingMove : activeKing.validMoves(toAnalyze)) {
             if (!kingMove.endangersKing()) {
-                return 0;
+                return false;
             }
         }
-        return VALUE_CHECKMATE * colorFactor(active.enemy());
+        return true;
     }
 
     /**
@@ -72,26 +60,17 @@ public class PositionAnalysis {
      *
      * @param toAnalyze the board to analyze
      */
-    private double addMaterialValues(Board toAnalyze) {
+    private double pieceValues(Board toAnalyze) {
         double toReturn = 0.0;
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
                 Piece occupant = toAnalyze.occupant(col, row);
-                double pieceValue = 0.0;
 
                 if (occupant == null) {
                     continue;
-                } else if (occupant instanceof Queen) {
-                    pieceValue = VALUE_QUEEN;
-                } else if (occupant instanceof Bishop) {
-                    pieceValue = VALUE_BISHOP;
-                } else if (occupant instanceof Knight) {
-                    pieceValue = VALUE_KNIGHT;
-                } else if (occupant instanceof Pawn) {
-                    pieceValue = VALUE_PAWN;
-                } else if (occupant instanceof Rook) {
-                    pieceValue = VALUE_ROOK;
                 }
+
+                double pieceValue = occupant.materialValue() + occupant.positionalValue(toAnalyze);
 
                 toReturn = toReturn + (colorFactor(occupant.color) * pieceValue);
             }

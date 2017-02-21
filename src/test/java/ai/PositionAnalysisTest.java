@@ -28,7 +28,7 @@ public class PositionAnalysisTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(0, 0)).thenReturn(new Pawn(Color.BLACK, 0, 0));
 
-        assertTrue(new PositionAnalysis(fakeBoard).value == 0 - PositionAnalysis.VALUE_PAWN);
+        assertTrue(new PositionAnalysis(fakeBoard).value == 0 - new Pawn(Color.BLACK, 0, 0).materialValue());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class PositionAnalysisTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(0, 0)).thenReturn(new Rook(Color.WHITE, 0, 0));
 
-        assertTrue(new PositionAnalysis(fakeBoard).value == PositionAnalysis.VALUE_ROOK);
+        assertTrue(new PositionAnalysis(fakeBoard).value == new Rook(Color.WHITE, 0, 0).materialValue());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class PositionAnalysisTest {
         when(fakeBoard.occupant(0, 0)).thenReturn(new Queen(Color.BLACK, 0, 0));
         when(fakeBoard.occupant(0, 1)).thenReturn(new Queen(Color.BLACK, 0, 1));
 
-        assertTrue(new PositionAnalysis(fakeBoard).value == 2 * (0 - PositionAnalysis.VALUE_QUEEN));
+        assertTrue(new PositionAnalysis(fakeBoard).value == 2 * (0 - new Queen(Color.BLACK, 0, 0).materialValue()));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class PositionAnalysisTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(0, 0)).thenReturn(new Knight(Color.WHITE, 0, 0));
 
-        assertTrue(new PositionAnalysis(fakeBoard).value == PositionAnalysis.VALUE_KNIGHT);
+        assertTrue(new PositionAnalysis(fakeBoard).value == new Knight(Color.WHITE, 0, 0).materialValue());
     }
 
     @Test
@@ -61,15 +61,15 @@ public class PositionAnalysisTest {
         Board fakeBoard = mock(Board.class);
         when(fakeBoard.occupant(0, 0)).thenReturn(new Bishop(Color.BLACK, 0, 0));
 
-        assertTrue(new PositionAnalysis(fakeBoard).value == 0 - PositionAnalysis.VALUE_BISHOP);
+        assertTrue(new PositionAnalysis(fakeBoard).value == 0 - new Bishop(Color.BLACK, 0, 0).materialValue());
     }
 
     @Test
     public void constructor_valuesCheckmate() {
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.getActivePlayer()).thenReturn(Color.BLACK);
-        when(fakeBoard.kingThreatened(any(King.class))).thenReturn(true);
+        when(fakeBoard.activePlayer()).thenReturn(Color.BLACK);
         King fakeKing = mock(King.class);
+        when(fakeKing.threatened(fakeBoard)).thenReturn(true);
         when(fakeKing.position()).thenReturn(new Point(0, 0));
         when(fakeKing.validMoves(fakeBoard)).thenReturn(new LinkedList<>());
         when(fakeBoard.findKing(any(Color.class))).thenReturn(fakeKing);

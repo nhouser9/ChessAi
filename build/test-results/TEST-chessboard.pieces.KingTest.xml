@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chessboard.pieces.KingTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2017-02-20T08:29:20" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.012">
+<testsuite name="chessboard.pieces.KingTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2017-02-20T20:00:56" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.073">
   <properties/>
-  <testcase name="validMoves_preventsNonAdjacentMoves" classname="chessboard.pieces.KingTest" time="0.003"/>
+  <testcase name="validMoves_preventsNonAdjacentMoves" classname="chessboard.pieces.KingTest" time="0.002"/>
   <testcase name="validMoves_allowsAdjacentMoves" classname="chessboard.pieces.KingTest" time="0.003"/>
   <testcase name="validMoves_preventsCollisionWithNonEnemies" classname="chessboard.pieces.KingTest" time="0.001"/>
-  <testcase name="validMoves_allowsCastlingLeft_whenBoardAllows" classname="chessboard.pieces.KingTest" time="0.002"/>
+  <testcase name="canCastle_returnsFalse_whenKingHasMoved" classname="chessboard.pieces.KingTest" time="0.003"/>
+  <testcase name="canCastleEast_returnsFalse_whenRightRookHasMoved" classname="chessboard.pieces.KingTest" time="0.06"/>
+  <testcase name="canCastle_returnsFalse_whenKingIsInCheck" classname="chessboard.pieces.KingTest" time="0.0"/>
+  <testcase name="canCastleRight_returnsFalse_whenPiecesInTheWayOfKing" classname="chessboard.pieces.KingTest" time="0.0"/>
+  <testcase name="canCastleRight_returnsFalse_whenPiecesInTheWayOfRook" classname="chessboard.pieces.KingTest" time="0.001"/>
+  <testcase name="canCastleRight_returnsFalse_whenInterveningSpaceThreatened" classname="chessboard.pieces.KingTest" time="0.0"/>
+  <testcase name="canCastle_returnsTrue_whenUnblockedUnthreatenedAndUnmoved" classname="chessboard.pieces.KingTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

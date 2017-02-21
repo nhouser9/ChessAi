@@ -20,6 +20,16 @@ public class FakePiece extends Piece {
     }
 
     @Override
+    public void addPositionalRules() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double materialValue() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public List<GenericMove> validMoves(Board board) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

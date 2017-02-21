@@ -66,6 +66,31 @@ public abstract class GenericMove {
     }
 
     /**
+     * Method which checks whether a given move would allow the king to be
+     * captured, which would make it illegal. Sets up the board as if the move
+     * had been made then delegats the actual check to another method.
+     *
+     * @return true if the move is illegal because it allows capture of the
+     * king, false otherwise
+     */
+    public boolean endangersKing() {
+        updateBoard();
+
+        King king = board.findKing(piece.color);
+
+        boolean toReturn;
+        if (king == null) {
+            toReturn = false;
+        } else {
+            toReturn = king.threatened(board);
+        }
+
+        revertBoard();
+
+        return toReturn;
+    }
+
+    /**
      * Makes the move, including adding the move to the board before updating
      * the active player, move history, and current valid moves. Returns whether
      * the operation was successful.
@@ -101,30 +126,6 @@ public abstract class GenericMove {
         board.removeLastMove();
         board.resetValidMoves();
         return true;
-    }
-
-    /**
-     * Method which checks whether a given move would allow the king to be
-     * captured, which would make it illegal. Sets up the board as if the move
-     * had been made then delegats the actual check to another method.
-     *
-     * @return true if the move is illegal because it allows capture of the
-     * king, false otherwise
-     */
-    public boolean endangersKing() {
-        updateBoard();
-
-        King king = board.findKing(piece.color);
-        boolean toReturn;
-        if (king == null) {
-            toReturn = false;
-        } else {
-            toReturn = board.kingThreatened(king);
-        }
-
-        revertBoard();
-
-        return toReturn;
     }
 
     /**
