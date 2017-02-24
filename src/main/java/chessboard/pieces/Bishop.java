@@ -69,4 +69,14 @@ public class Bishop extends Piece {
     public double materialValue() {
         return 3.0;
     }
+
+    /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    @Override
+    public Bishop copy() {
+        return new Bishop(color, position().x, position().y);
+    }
 }

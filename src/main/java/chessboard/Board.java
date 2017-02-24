@@ -271,4 +271,27 @@ public class Board {
             }
         }
     }
+
+    /**
+     * Method which returns a deep copy of this Board.
+     *
+     * @return a deep copy of this Board
+     */
+    public Board copyOf() {
+        List<Piece> occupants = new LinkedList<>();
+
+        for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
+            for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
+                Piece occupant = occupant(col, row);
+                if (occupant != null) {
+                    Piece copy = occupant.copyOf();
+                    occupants.add(copy);
+                }
+            }
+        }
+
+        Board toReturn = new Board(occupants, activePlayer);
+
+        return toReturn;
+    }
 }

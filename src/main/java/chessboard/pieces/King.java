@@ -82,6 +82,16 @@ public class King extends Piece {
     }
 
     /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    @Override
+    public King copy() {
+        return new King(color, position().x, position().y);
+    }
+
+    /**
      * Method which checks whether the king is being threatened. This is used to
      * determine move validity.
      *

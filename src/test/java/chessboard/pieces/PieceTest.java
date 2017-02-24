@@ -281,4 +281,11 @@ public class PieceTest {
         Piece testOther = new FakePiece(Color.BLACK, 0, 0);
         assertTrue(testPiece.equals(testOther));
     }
+
+    @Test
+    public void copyOf_copiesMovedStatus() {
+        Piece testPiece = new Bishop(Color.BLACK, 0, 0);
+        testPiece.addMoveCount();
+        assertTrue(testPiece.copyOf().hasMoved());
+    }
 }

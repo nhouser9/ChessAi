@@ -303,4 +303,57 @@ public class BoardTest {
         assertTrue(original.occupant(whitePawnLoc.x, whitePawnLoc.y) == whitePawn);
     }
 
+    @Test
+    public void copyOf_placesPiecesCorrectly() {
+        Board original = new Board(Board.initialState(), Color.WHITE);
+        for (int move = 0; move < 4; move++) {
+            original.validMoves().get(2).execute();
+        }
+
+        Board copy = original.copyOf();
+
+        for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
+            for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
+                Piece originalOccupant = original.occupant(col, row);
+                Piece copyOccupant = copy.occupant(col, row);
+                if (originalOccupant == null) {
+                    assertTrue(copyOccupant == null);
+                } else {
+                    assertTrue(originalOccupant.equals(copyOccupant));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void copyOf_performsDeepCopy() {
+        Board original = new Board(Board.initialState(), Color.WHITE);
+        for (int move = 0; move < 4; move++) {
+            original.validMoves().get(1).execute();
+        }
+
+        Board copy = original.copyOf();
+
+        for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
+            for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
+                Piece originalOccupant = original.occupant(col, row);
+                Piece copyOccupant = copy.occupant(col, row);
+                if (originalOccupant == null) {
+                    assertTrue(copyOccupant == null);
+                } else {
+                    assertTrue(originalOccupant != copyOccupant);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void copyOf_copiesActivePlayer() {
+        Board original = new Board(Board.initialState(), Color.BLACK);
+
+        Board copy = original.copyOf();
+        Color active = original.validMoves().get(0).piece.color;
+
+        assertTrue(copy.validMoves().get(0).piece.color == active);
+    }
 }

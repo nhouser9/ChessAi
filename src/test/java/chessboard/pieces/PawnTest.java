@@ -235,4 +235,20 @@ public class PawnTest {
         List<GenericMove> moves = testPawn.validMoves(fakeBoard);
         assertFalse(moves.contains(testMove));
     }
+
+    @Test
+    public void validMoves_preventsEnPassant_whenNotOnCorrectRank() {
+        Pawn testPawn = new Pawn(Color.BLACK, 1, 3);
+        Pawn testCapture = new Pawn(Color.WHITE, 2, 6);
+
+        Board fakeBoard = mock(Board.class);
+        Point captureMoveTo = new Point(2, 4);
+        GenericMove fakeHistory = MoveFactory.create(fakeBoard, testCapture, captureMoveTo.x, captureMoveTo.y);
+        testCapture.setPosition(captureMoveTo);
+        when(fakeBoard.lastMove()).thenReturn(fakeHistory);
+
+        GenericMove testMove = MoveFactory.create(fakeBoard, testPawn, 2, 5);
+        List<GenericMove> moves = testPawn.validMoves(fakeBoard);
+        assertFalse(moves.contains(testMove));
+    }
 }

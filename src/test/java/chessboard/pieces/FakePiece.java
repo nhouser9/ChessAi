@@ -32,4 +32,9 @@ public class FakePiece extends Piece {
     public List<GenericMove> validMoves(Board board) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    protected Piece copy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

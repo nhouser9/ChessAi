@@ -68,4 +68,14 @@ public class Queen extends Piece {
     public double materialValue() {
         return 3.0;
     }
+
+    /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    @Override
+    public Queen copy() {
+        return new Queen(color, position().x, position().y);
+    }
 }

@@ -14,6 +14,7 @@ import chessboard.moves.MoveFactory;
 import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Abstract class representing a generic chess piece. Will be implemented by
@@ -113,6 +114,25 @@ public abstract class Piece {
     public abstract void addPositionalRules();
 
     /**
+     * Abstract method which delegates the non-generic portion of the copyOf
+     * method to implementing classes.
+     *
+     * @return an incomplete copy of the implementing class
+     */
+    protected abstract Piece copy();
+
+    /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    public Piece copyOf() {
+        Piece copy = copy();
+        copy.moveCount = moveCount;
+        return copy;
+    }
+
+    /**
      * Helper method which adds a rule to the list of positional rules.
      *
      * @param rule the rule to add
@@ -191,5 +211,15 @@ public abstract class Piece {
         }
 
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.color);
+        hash = 29 * hash + Objects.hashCode(this.position);
+        hash = 29 * hash + this.moveCount;
+        hash = 29 * hash + this.getClass().getSimpleName().hashCode();
+        return hash;
     }
 }

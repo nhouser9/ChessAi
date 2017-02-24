@@ -63,49 +63,94 @@ public class Pawn extends Piece {
      */
     @Override
     public List<GenericMove> validMoves(Board board) {
-        //set up variables
         List<GenericMove> toReturn = new ArrayList<>();
-        int addX;
-        int addY;
 
-        //add normal move
-        addX = position().x;
-        addY = position().y + color.forwardDirection().y();
+        addNormalMove(toReturn, board);
+        addCaptureMove(toReturn, board);
+        addDoubleMove(toReturn, board);
+        addEnPassant(toReturn, board);
+
+        return toReturn;
+    }
+
+    /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    @Override
+    public Pawn copy() {
+        return new Pawn(color, position().x, position().y);
+    }
+
+    /**
+     * Helper method which adds valid normal moves to the list of valid moves.
+     *
+     * @param toReturn the list to populate
+     * @param board the board on which the move will be made
+     */
+    private void addNormalMove(List<GenericMove> toReturn, Board board) {
+        int addX = position().x;
+        int addY = position().y + color.forwardDirection().y();
         MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
+    }
 
-        //add capture move
+    /**
+     * Helper method which adds valid capture moves to the list of valid moves.
+     *
+     * @param toReturn the list to populate
+     * @param board the board on which the move will be made
+     */
+    private void addCaptureMove(List<GenericMove> toReturn, Board board) {
         for (Direction diagonal : color.forwardDiagonals()) {
-            addX = position().x + diagonal.x();
-            addY = position().y + diagonal.y();
+            int addX = position().x + diagonal.x();
+            int addY = position().y + diagonal.y();
             MoveFactory.addIfValid(toReturn, board, this, addX, addY, true, false);
         }
+    }
 
-        //add double move
+    /**
+     * Helper method which adds valid double moves to the list of valid moves.
+     *
+     * @param toReturn the list to populate
+     * @param board the board on which the move will be made
+     */
+    private void addDoubleMove(List<GenericMove> toReturn, Board board) {
         Piece blocker = board.occupant(position().x, position().y + color.forwardDirection().y());
         if (blocker == null && position().y == color.pawnRow()) {
-            addX = position().x;
-            addY = position().y + (2 * color.forwardDirection().y());
+            int addX = position().x;
+            int addY = position().y + (2 * color.forwardDirection().y());
             MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
         }
+    }
 
-        //add en passant
+    /**
+     * Helper method which adds valid en passant moves to the list of valid
+     * moves.
+     *
+     * @param toReturn the list to populate
+     * @param board the board on which the move will be made
+     */
+    private void addEnPassant(List<GenericMove> toReturn, Board board) {
         GenericMove lastMove = board.lastMove();
-        if (lastMove != null) {
-            boolean enemyMoveAllowsEnPassant = true;
-            enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && lastMove.piece instanceof Pawn;
-            enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && lastMove.piece.color != color;
-            enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && lastMove.to.y == position().y;
-            enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && Math.abs(lastMove.to.x - position().x) == 1;
-            enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && lastMove.from.x == lastMove.to.x;
-            enemyMoveAllowsEnPassant = enemyMoveAllowsEnPassant && Math.abs(lastMove.from.y - lastMove.to.y) == 2;
-            if (enemyMoveAllowsEnPassant) {
-                addX = lastMove.to.x;
-                addY = position().y + color.forwardDirection().y();
-                MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
-            }
+        if (lastMove == null) {
+            return;
+        }
+        if (!(lastMove.piece instanceof Pawn)) {
+            return;
+        }
+        if (Math.abs(lastMove.to.x - position().x) != 1) {
+            return;
+        }
+        if (Math.abs(lastMove.from.y - lastMove.to.y) != 2) {
+            return;
+        }
+        if (lastMove.to.y != position().y) {
+            return;
         }
 
-        //return
-        return toReturn;
+        int addX = lastMove.to.x;
+        int addY = position().y + color.forwardDirection().y();
+        MoveFactory.addIfValid(toReturn, board, this, addX, addY, false, true);
     }
 }

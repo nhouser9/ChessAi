@@ -40,7 +40,6 @@ public class EnPassant extends GenericMove {
      */
     @Override
     protected void implementationExecute() {
-        int x = 2;
         board.setOccupant(captured.position().x, captured.position().y, null);
     }
 

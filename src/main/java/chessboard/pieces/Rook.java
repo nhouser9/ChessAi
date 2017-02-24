@@ -63,4 +63,14 @@ public class Rook extends Piece {
 
         return toReturn;
     }
+
+    /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    @Override
+    public Rook copy() {
+        return new Rook(color, position().x, position().y);
+    }
 }

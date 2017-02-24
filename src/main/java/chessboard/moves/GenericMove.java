@@ -208,6 +208,7 @@ public abstract class GenericMove {
         hash = 59 * hash + this.from.y;
         hash = 59 * hash + this.to.x;
         hash = 59 * hash + this.to.y;
+        hash = 59 * hash + piece.hashCode();
         return hash;
     }
 }

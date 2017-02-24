@@ -43,7 +43,6 @@ public class Knight extends Piece {
     @Override
     public List<GenericMove> validMoves(Board board) {
         List<GenericMove> toReturn = new ArrayList<>();
-        Point target;
 
         int[] ones = {-1, 1};
         int[] twos = {-2, 2};
@@ -74,5 +73,15 @@ public class Knight extends Piece {
     @Override
     public double materialValue() {
         return 3.0;
+    }
+
+    /**
+     * Method which returns a copy of the Piece.
+     *
+     * @return a copy of this Piece
+     */
+    @Override
+    public Knight copy() {
+        return new Knight(color, position().x, position().y);
     }
 }
