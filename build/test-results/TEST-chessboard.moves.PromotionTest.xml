@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="chessboard.moves.PromotionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2017-02-21T04:42:21" hostname="fish-HP-Spectre-x360-Convertible-13" time="0.04">
-  <properties/>
-  <testcase name="revert_restoresACapturedPiece" classname="chessboard.moves.PromotionTest" time="0.04"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
