@@ -1,0 +1,82 @@
+28/02/2017 07:49:31.904 - [chess.gui.BoardController.humanMove] ------ [INFO] - Trying human move
+28/02/2017 07:49:31.910 - [chess.gui.BoardController.move] ----------- [INFO] - Move = WHITE Knight from (1,7) to (2,5)
+28/02/2017 07:49:31.924 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:49:31.927 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: 0.04
+28/02/2017 07:49:31.932 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:49:34.916 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: 0.16
+28/02/2017 07:49:34.916 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Pawn from (2,1) to (2,2)
+28/02/2017 07:49:34.916 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Pawn from (4,6) to (4,5)
+28/02/2017 07:49:34.916 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (3,0) to (0,3)
+28/02/2017 07:49:34.917 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (3,7) to (6,4)
+28/02/2017 07:49:34.918 - [chess.gui.BoardController.move] ----------- [INFO] - Move = BLACK Pawn from (2,1) to (2,2)
+28/02/2017 07:49:34.919 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:49:34.920 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: 0.01
+28/02/2017 07:49:34.921 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:49:38.287 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: -0.95
+28/02/2017 07:49:38.287 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Pawn from (4,6) to (4,5)
+28/02/2017 07:49:38.288 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (3,0) to (0,3)
+28/02/2017 07:49:38.288 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Knight from (2,5) to (4,4)
+28/02/2017 07:49:38.288 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (0,3) to (3,6)
+28/02/2017 07:49:38.288 - [chess.gui.BoardController.move] ----------- [INFO] - Move = WHITE Pawn from (4,6) to (4,5)
+28/02/2017 07:49:38.290 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:49:38.291 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: 0.13
+28/02/2017 07:49:38.292 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:49:54.132 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: 0.24
+28/02/2017 07:49:54.133 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (3,0) to (0,3)
+28/02/2017 07:49:54.133 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (3,7) to (6,4)
+28/02/2017 07:49:54.133 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (0,3) to (2,5)
+28/02/2017 07:49:54.134 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Pawn from (1,6) to (2,5)
+28/02/2017 07:49:54.134 - [chess.gui.BoardController.move] ----------- [INFO] - Move = BLACK Queen from (3,0) to (0,3)
+28/02/2017 07:49:54.140 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:49:54.143 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: 0
+28/02/2017 07:49:54.144 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:50:29.966 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: -0.99
+28/02/2017 07:50:29.967 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Knight from (2,5) to (1,7)
+28/02/2017 07:50:29.967 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (0,3) to (6,3)
+28/02/2017 07:50:29.967 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (3,7) to (5,5)
+28/02/2017 07:50:29.967 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (6,3) to (4,5)
+28/02/2017 07:50:29.968 - [chess.gui.BoardController.move] ----------- [INFO] - Move = WHITE Knight from (2,5) to (1,7)
+28/02/2017 07:50:29.970 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:50:29.970 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: -0.06
+28/02/2017 07:50:29.971 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:50:58.348 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: 0.13
+28/02/2017 07:50:58.349 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (0,3) to (2,3)
+28/02/2017 07:50:58.350 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Bishop from (5,7) to (3,5)
+28/02/2017 07:50:58.350 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Pawn from (7,1) to (7,2)
+28/02/2017 07:50:58.350 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (3,7) to (6,4)
+28/02/2017 07:50:58.351 - [chess.gui.BoardController.move] ----------- [INFO] - Move = BLACK Queen from (0,3) to (2,3)
+28/02/2017 07:50:58.353 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:50:58.355 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: -0.05
+28/02/2017 07:50:58.358 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:51:28.842 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: -0.99
+28/02/2017 07:51:28.843 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Pawn from (3,6) to (3,4)
+28/02/2017 07:51:28.843 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (2,3) to (1,4)
+28/02/2017 07:51:28.843 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Pawn from (2,6) to (2,5)
+28/02/2017 07:51:28.843 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (1,4) to (3,4)
+28/02/2017 07:51:28.843 - [chess.gui.BoardController.move] ----------- [INFO] - Move = WHITE Pawn from (3,6) to (3,4)
+28/02/2017 07:51:28.845 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:51:28.846 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: 0.02
+28/02/2017 07:51:28.846 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:52:03.676 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: 0.1
+28/02/2017 07:52:03.677 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (2,3) to (0,3)
+28/02/2017 07:52:03.678 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Knight from (1,7) to (2,5)
+28/02/2017 07:52:03.678 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Pawn from (3,1) to (3,2)
+28/02/2017 07:52:03.678 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (3,7) to (7,3)
+28/02/2017 07:52:03.679 - [chess.gui.BoardController.move] ----------- [INFO] - Move = BLACK Queen from (2,3) to (0,3)
+28/02/2017 07:52:03.692 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:52:03.702 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: -0.01
+28/02/2017 07:52:03.702 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:52:10.637 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: -0.91
+28/02/2017 07:52:10.638 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Bishop from (2,7) to (3,6)
+28/02/2017 07:52:10.638 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (0,3) to (5,3)
+28/02/2017 07:52:10.638 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Knight from (1,7) to (2,5)
+28/02/2017 07:52:10.639 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (5,3) to (5,6)
+28/02/2017 07:52:10.639 - [chess.gui.BoardController.move] ----------- [INFO] - Move = WHITE Bishop from (2,7) to (3,6)
+28/02/2017 07:52:10.641 - [chess.gui.BoardController.move] ----------- [INFO] - Success
+28/02/2017 07:52:10.642 - [chess.gui.BoardController.move] ----------- [FINE] - Value after move: 0.01
+28/02/2017 07:52:10.642 - [chess.gui.BoardController.aiMove] --------- [INFO] - Trying computer move
+28/02/2017 07:52:48.022 - [chess.ai.MoveSelector.selectMove] --------- [FINE] - Worst case value of best move: 0.2
+28/02/2017 07:52:48.023 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (0,3) to (1,2)
+28/02/2017 07:52:48.023 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (3,7) to (5,5)
+28/02/2017 07:52:48.023 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = BLACK Queen from (1,2) to (1,6)
+28/02/2017 07:52:48.023 - [chess.ai.MoveSelector.selectMove] --------- [FINER] - Next move in best sequence = WHITE Queen from (5,5) to (2,2)
