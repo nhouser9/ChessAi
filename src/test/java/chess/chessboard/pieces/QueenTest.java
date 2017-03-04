@@ -7,9 +7,9 @@ package chess.chessboard.pieces;
 
 import chess.chessboard.Board;
 import chess.chessboard.Color;
+import chess.chessboard.Square;
 import chess.chessboard.moves.GenericMove;
 import chess.chessboard.moves.MoveFactory;
-import java.awt.Point;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -26,7 +26,9 @@ public class QueenTest {
         Queen testQueen = new Queen(Color.BLACK, testInitialX, testInitialY);
 
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         List<GenericMove> moves = testQueen.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
@@ -52,7 +54,9 @@ public class QueenTest {
         Queen testQueen = new Queen(Color.BLACK, testInitialX, testInitialY);
 
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         List<GenericMove> moves = testQueen.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {

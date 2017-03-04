@@ -31,7 +31,7 @@ public class EnPassant extends GenericMove {
     protected EnPassant(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
         int captureY = targetPosition.y - mover.color.forwardDirection().y();
-        captured = board.occupant(targetPosition.x, captureY);
+        captured = board.square(targetPosition.x, captureY).occupant();
     }
 
     /**
@@ -40,7 +40,7 @@ public class EnPassant extends GenericMove {
      */
     @Override
     protected void implementationExecute() {
-        board.setOccupant(captured.position().x, captured.position().y, null);
+        board.square(captured.position().x, captured.position().y).setOccupant(null);
     }
 
     /**
@@ -49,6 +49,6 @@ public class EnPassant extends GenericMove {
      */
     @Override
     protected void implementationRevert() {
-        board.setOccupant(captured.position().x, captured.position().y, captured);
+        board.square(captured.position().x, captured.position().y).setOccupant(captured);
     }
 }

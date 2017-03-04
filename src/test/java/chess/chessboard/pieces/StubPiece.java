@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * Fake implementation of Piece for unit testing.
  */
-public class FakePiece extends Piece {
+public class StubPiece extends Piece {
 
-    public FakePiece(Color color, int x, int y) {
+    public StubPiece(Color color, int x, int y) {
         super(color, x, y);
     }
 
@@ -35,6 +35,11 @@ public class FakePiece extends Piece {
 
     @Override
     protected Piece copy() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected char fenChar() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

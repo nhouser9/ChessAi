@@ -13,6 +13,11 @@ package chess.chessboard;
 public enum Color {
     BLACK {
         @Override
+        public char fenCase(char fen) {
+            return Character.toLowerCase(fen);
+        }
+
+        @Override
         public Direction forwardDirection() {
             return Direction.SOUTH;
         }
@@ -33,6 +38,11 @@ public enum Color {
         }
     },
     WHITE {
+        @Override
+        public char fenCase(char fen) {
+            return Character.toUpperCase(fen);
+        }
+
         @Override
         public Direction forwardDirection() {
             return Direction.NORTH;
@@ -83,6 +93,14 @@ public enum Color {
      * @return the row on which this color pieces begin
      */
     public abstract int homeRow();
+
+    /**
+     * Returns the case for the fen notation of this piece.
+     *
+     * @param fen the fen notation for a piece
+     * @return the notation, capitalized or not in accordance with the color
+     */
+    public abstract char fenCase(char fen);
 
     /**
      * Returns the queen row for this color's pieces by moving to the opposite

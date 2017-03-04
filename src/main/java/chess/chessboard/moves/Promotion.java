@@ -30,7 +30,7 @@ public class Promotion extends GenericMove {
      */
     protected Promotion(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
-        captured = board.occupant(to.x, to.y);
+        captured = board.square(to.x, to.y).occupant();
     }
 
     /**
@@ -40,7 +40,7 @@ public class Promotion extends GenericMove {
     @Override
     protected void implementationExecute() {
         Piece promotion = new Queen(getPiece().color, to.x, to.y);
-        board.setOccupant(to.x, to.y, promotion);
+        board.square(to.x, to.y).setOccupant(promotion);
     }
 
     /**
@@ -51,7 +51,7 @@ public class Promotion extends GenericMove {
     @Override
     protected void implementationRevert() {
         if (captured != null) {
-            board.setOccupant(captured.position().x, captured.position().y, captured);
+            board.square(captured.position().x, captured.position().y).setOccupant(captured);
         }
     }
 }

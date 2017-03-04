@@ -122,6 +122,14 @@ public abstract class Piece {
     protected abstract Piece copy();
 
     /**
+     * Abstract method which returns the character for representing this piece
+     * in a fen.
+     *
+     * @return the character which represents this piece in a fen
+     */
+    protected abstract char fenChar();
+
+    /**
      * Method which returns a copy of the Piece.
      *
      * @return a copy of this Piece
@@ -130,6 +138,18 @@ public abstract class Piece {
         Piece copy = copy();
         copy.moveCount = moveCount;
         return copy;
+    }
+
+    /**
+     * Method which returns the character which represents this piece in a fen.
+     * Delegates selection of the character to implementation classes before
+     * transforming it to the case corresponsing to its color. By convention,
+     * white is upper case and black is lower case.
+     *
+     * @return a character representation of this piece for use in a fen
+     */
+    public char asFen() {
+        return color.fenCase(fenChar());
     }
 
     /**
@@ -171,7 +191,7 @@ public abstract class Piece {
         int row = position().y + direction.y();
 
         while (Board.inBounds(col, row)) {
-            Piece occupant = board.occupant(col, row);
+            Piece occupant = board.square(col, row).occupant();
             if (occupant != null) {
                 MoveFactory.addIfValid(moves, board, this, col, row, true, true);
                 break;

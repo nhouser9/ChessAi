@@ -84,4 +84,14 @@ public class Knight extends Piece {
     public Knight copy() {
         return new Knight(color, position().x, position().y);
     }
+
+    /**
+     * Returns the character that represents this piece in a fen.
+     *
+     * @return the character that represents this piece in a fen
+     */
+    @Override
+    protected char fenChar() {
+        return 'n';
+    }
 }

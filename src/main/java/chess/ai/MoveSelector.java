@@ -7,7 +7,6 @@ package chess.ai;
 
 import chess.chessboard.Board;
 import chess.chessboard.moves.GenericMove;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,15 +53,20 @@ public class MoveSelector {
      */
     public GenericMove selectMove() {
         addChildren(analysisCopy, rootNode, 0, depth);
+        AnalysisNode child = rootNode.worstCaseChild();
 
         LOGGER.log(Level.FINE, "Worst case value of best move: {0}", rootNode.worstCaseValue());
-        AnalysisNode child = rootNode.worstCaseChild();
         while (child != null) {
             LOGGER.log(Level.FINER, "Next move in best sequence = {0}", child.moveToReach);
             child = child.worstCaseChild();
         }
 
-        GenericMove move = rootNode.worstCaseChild().moveToReach;
+        child = rootNode.worstCaseChild();
+        if (child == null) {
+            return null;
+        }
+
+        GenericMove move = child.moveToReach;
         move.changeBoard(original);
         return move;
     }
@@ -79,17 +83,10 @@ public class MoveSelector {
      */
     private void addChildren(Board analysisCopy, AnalysisNode node, int currentDepth, int targetDepth) {
         if (currentDepth == targetDepth) {
-            node.resetWorstCaseValue();
             return;
         }
 
-        List<GenericMove> moves = analysisCopy.validMoves();
-        if (moves.isEmpty()) {
-            node.resetWorstCaseValue();
-            return;
-        }
-
-        for (GenericMove possible : moves) {
+        for (GenericMove possible : analysisCopy.validMoves()) {
             possible.execute();
 
             AnalysisNode child = new AnalysisNode(analysisCopy, possible);

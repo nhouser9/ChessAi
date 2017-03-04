@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Nick Houser
  */
-public class AnalysisNode implements Comparable<AnalysisNode> {
+public class AnalysisNode {
 
     //the expected value of this position
     private final double value;
@@ -29,9 +29,6 @@ public class AnalysisNode implements Comparable<AnalysisNode> {
 
     //the children of this node
     private List<AnalysisNode> children;
-
-    //the value of this move assuming the best possible response from the opponent
-    private Double worstCaseValue;
 
     //the best possible response from the opponent to this position
     private AnalysisNode worstCaseChild;
@@ -49,7 +46,6 @@ public class AnalysisNode implements Comparable<AnalysisNode> {
         children = new LinkedList<>();
         parent = null;
         moveToReach = move;
-        worstCaseValue = null;
         worstCaseChild = null;
         activePlayer = board.activePlayer();
         value = new PositionAnalysis(board).value;
@@ -100,7 +96,12 @@ public class AnalysisNode implements Comparable<AnalysisNode> {
      * possible response
      */
     public Double worstCaseValue() {
-        return worstCaseValue;
+        if (worstCaseChild == null) {
+            return value;
+        }
+
+        return worstCaseChild.worstCaseValue();
+        //return worstCaseValue;
     }
 
     /**
@@ -115,24 +116,14 @@ public class AnalysisNode implements Comparable<AnalysisNode> {
     /**
      * Method which sets the value of this move assuming the opponent makes the
      * best possible response.
-     */
-    public void resetWorstCaseValue() {
-        worstCaseValue = value;
-    }
-
-    /**
-     * Method which sets the value of this move assuming the opponent makes the
-     * best possible response.
      *
      * @param toSet the new worst case value
      */
     public void setWorstCaseChild(AnalysisNode toSet) {
-        if (worstCaseValue == null) {
+        if (worstCaseChild == null) {
             worstCaseChild = toSet;
-            worstCaseValue = toSet.worstCaseValue;
-        } else if (worstCaseChild.compareTo(toSet) < 0) {
+        } else if (toSet.betterThan(worstCaseChild)) {
             worstCaseChild = toSet;
-            worstCaseValue = toSet.worstCaseValue;
         }
     }
 
@@ -143,20 +134,11 @@ public class AnalysisNode implements Comparable<AnalysisNode> {
      * @param o the other node to compare
      * @return 1 if the other node is better than this one, -1 otherwise
      */
-    @Override
-    public int compareTo(AnalysisNode o) {
-        switch (activePlayer) {
-            case WHITE:
-                if (worstCaseValue > o.worstCaseValue) {
-                    return -1;
-                }
-                break;
-            case BLACK:
-                if (o.worstCaseValue > worstCaseValue) {
-                    return -1;
-                }
-                break;
+    public boolean betterThan(AnalysisNode o) {
+        if (activePlayer == Color.WHITE) {
+            return (worstCaseValue() < o.worstCaseValue());
+        } else {
+            return (worstCaseValue() > o.worstCaseValue());
         }
-        return 1;
     }
 }

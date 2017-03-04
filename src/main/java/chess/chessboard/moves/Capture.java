@@ -29,7 +29,7 @@ public class Capture extends GenericMove {
      */
     protected Capture(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
-        captured = board.occupant(to.x, to.y);
+        captured = board.square(to.x, to.y).occupant();
     }
 
     /**
@@ -47,6 +47,6 @@ public class Capture extends GenericMove {
      */
     @Override
     protected void implementationRevert() {
-        board.setOccupant(captured.position().x, captured.position().y, captured);
+        board.square(captured.position().x, captured.position().y).setOccupant(captured);
     }
 }

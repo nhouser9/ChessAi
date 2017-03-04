@@ -66,7 +66,7 @@ public class Queen extends Piece {
      */
     @Override
     public double materialValue() {
-        return 3.0;
+        return 9.0;
     }
 
     /**
@@ -77,5 +77,15 @@ public class Queen extends Piece {
     @Override
     public Queen copy() {
         return new Queen(color, position().x, position().y);
+    }
+
+    /**
+     * Returns the character that represents this piece in a fen.
+     *
+     * @return the character that represents this piece in a fen
+     */
+    @Override
+    protected char fenChar() {
+        return 'q';
     }
 }

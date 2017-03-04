@@ -33,19 +33,6 @@ public class Rook extends Piece {
     }
 
     /**
-     * Method which adds all relevant positional rules to this piece.
-     */
-    @Override
-    public void addPositionalRules() {
-        addPositionalRule(new NumberOfMoves());
-    }
-
-    @Override
-    public double materialValue() {
-        return 5.0;
-    }
-
-    /**
      * Method which returns a list of valid moves for the Rook. Rooks can move
      * forward, backward, or sideways, and cannot move past other pieces.
      *
@@ -65,6 +52,25 @@ public class Rook extends Piece {
     }
 
     /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    @Override
+    public void addPositionalRules() {
+        addPositionalRule(new NumberOfMoves());
+    }
+
+    /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    @Override
+    public double materialValue() {
+        return 5.0;
+    }
+
+    /**
      * Method which returns a copy of the Piece.
      *
      * @return a copy of this Piece
@@ -72,5 +78,15 @@ public class Rook extends Piece {
     @Override
     public Rook copy() {
         return new Rook(color, position().x, position().y);
+    }
+
+    /**
+     * Returns the character that represents this piece in a fen.
+     *
+     * @return the character that represents this piece in a fen
+     */
+    @Override
+    protected char fenChar() {
+        return 'r';
     }
 }

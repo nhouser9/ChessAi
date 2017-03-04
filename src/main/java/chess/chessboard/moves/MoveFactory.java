@@ -44,6 +44,10 @@ public class MoveFactory {
             return new Promotion(board, mover, target);
         }
 
+        if (isInitialPawnMove(mover, target)) {
+            return new InitialPawnMove(board, mover, target);
+        }
+
         if (isKingsideCastle(mover, target)) {
             return new KingsideCastle(board, mover, target);
         }
@@ -76,10 +80,10 @@ public class MoveFactory {
         if (!potential.valid()) {
             return;
         }
-        if (board.occupant(targetX, targetY) != null && !enemies) {
+        if (board.square(targetX, targetY).occupant() != null && !enemies) {
             return;
         }
-        if (board.occupant(targetX, targetY) == null && !empties) {
+        if (board.square(targetX, targetY).occupant() == null && !empties) {
             return;
         }
         moves.add(potential);
@@ -92,7 +96,7 @@ public class MoveFactory {
      *
      * @param board the board on which the move will be executed
      * @param mover the piece with will undergo the move
-     * @param targetPosition the the target location
+     * @param targetPosition the target location
      * @return true if the move is en passant, false otherwise
      */
     private static boolean isEnPassant(Board board, Piece mover, Point targetPosition) {
@@ -104,7 +108,7 @@ public class MoveFactory {
             return false;
         }
 
-        if (board.occupant(targetPosition.x, targetPosition.y) != null) {
+        if (board.square(targetPosition.x, targetPosition.y).occupant() != null) {
             return false;
         }
 
@@ -116,7 +120,7 @@ public class MoveFactory {
      * promotion if it is a pawn move that lands on the last rank.
      *
      * @param mover the piece with will undergo the move
-     * @param targetPosition the the target location
+     * @param targetPosition the target location
      * @return true if the move is a promotion, false otherwise
      */
     private static boolean isPromotion(Piece mover, Point targetPosition) {
@@ -132,10 +136,30 @@ public class MoveFactory {
     }
 
     /**
+     * Helper method which determines if a move is an initial pawn move. This is
+     * the case if the pawn makes a double move forward.
+     *
+     * @param mover the piece that will undergo the move
+     * @param targetPosition the target location
+     * @return true if the move is an initial pawn move, false otherwise
+     */
+    private static boolean isInitialPawnMove(Piece mover, Point targetPosition) {
+        if (!(mover instanceof Pawn)) {
+            return false;
+        }
+
+        if (Math.abs(targetPosition.y - mover.position().y) != 2) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Helper method which determines if a move is a kingside castle.
      *
      * @param mover the piece with will undergo the move
-     * @param targetPosition the the target location
+     * @param targetPosition the target location
      * @return true if the move is a kingside castle, false otherwise
      */
     private static boolean isKingsideCastle(Piece mover, Point targetPosition) {
@@ -154,7 +178,7 @@ public class MoveFactory {
      * Helper method which determines if a move is a queenside castle.
      *
      * @param mover the piece with will undergo the move
-     * @param targetPosition the the target location
+     * @param targetPosition the target location
      * @return true if the move is a queenside castle, false otherwise
      */
     private static boolean isQueensideCastle(Piece mover, Point targetPosition) {
@@ -174,11 +198,11 @@ public class MoveFactory {
      * capture if it moves onto another piece.
      *
      * @param board the board on which the move will be executed
-     * @param targetPosition the the target location
+     * @param targetPosition the target location
      * @return true if the move is a queenside castle, false otherwise
      */
     private static boolean isCapture(Board board, Point targetPosition) {
-        if (board.occupant(targetPosition.x, targetPosition.y) == null) {
+        if (board.square(targetPosition.x, targetPosition.y).occupant() == null) {
             return false;
         }
 

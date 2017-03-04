@@ -47,12 +47,7 @@ public class PositionAnalysis {
         if (!activeKing.threatened(toAnalyze)) {
             return false;
         }
-        for (GenericMove kingMove : activeKing.validMoves(toAnalyze)) {
-            if (!kingMove.endangersKing()) {
-                return false;
-            }
-        }
-        return true;
+        return toAnalyze.validMoves().isEmpty();
     }
 
     /**
@@ -64,7 +59,7 @@ public class PositionAnalysis {
         double toReturn = 0.0;
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-                Piece occupant = toAnalyze.occupant(col, row);
+                Piece occupant = toAnalyze.square(col, row).occupant();
 
                 if (occupant == null) {
                     continue;

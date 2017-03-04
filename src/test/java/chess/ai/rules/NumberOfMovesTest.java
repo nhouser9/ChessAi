@@ -5,9 +5,9 @@
  */
 package chess.ai.rules;
 
-import chess.ai.rules.NumberOfMoves;
 import chess.chessboard.Board;
 import chess.chessboard.Color;
+import chess.chessboard.Square;
 import chess.chessboard.pieces.Rook;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -21,7 +21,11 @@ public class NumberOfMovesTest {
     public void count_returnsTheNumberOfValidMoves_forThePassedPiece() {
         NumberOfMoves rule = new NumberOfMoves();
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
+
         Rook testRook = new Rook(Color.BLACK, 0, 0);
         assertTrue(testRook.validMoves(fakeBoard).size() == rule.count(testRook, fakeBoard));
     }

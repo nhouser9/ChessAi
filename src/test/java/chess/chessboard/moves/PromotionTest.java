@@ -33,6 +33,6 @@ public class PromotionTest {
         test.execute();
         test.revert();
 
-        assertTrue(board.occupant(testCapture.position().x, testCapture.position().y) == testCapture);
+        assertTrue(board.square(testCapture.position().x, testCapture.position().y).occupant() == testCapture);
     }
 }

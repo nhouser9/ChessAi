@@ -29,7 +29,7 @@ public abstract class Castle extends GenericMove {
      */
     protected Castle(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
-        swap = board.occupant(rookInitialX(), getPiece().color.homeRow());
+        swap = board.square(rookInitialX(), getPiece().color.homeRow()).occupant();
     }
 
     /**
@@ -56,8 +56,8 @@ public abstract class Castle extends GenericMove {
      */
     @Override
     protected void implementationExecute() {
-        board.setOccupant(rookInitialX(), getPiece().color.homeRow(), null);
-        board.setOccupant(rookTargetX(), getPiece().color.homeRow(), swap);
+        board.square(rookInitialX(), getPiece().color.homeRow()).setOccupant(null);
+        board.square(rookTargetX(), getPiece().color.homeRow()).setOccupant(swap);
         swap.setPosition(new Point(rookTargetX(), getPiece().color.homeRow()));
     }
 
@@ -67,8 +67,8 @@ public abstract class Castle extends GenericMove {
      */
     @Override
     protected void implementationRevert() {
-        board.setOccupant(rookInitialX(), getPiece().color.homeRow(), swap);
-        board.setOccupant(rookTargetX(), getPiece().color.homeRow(), null);
+        board.square(rookInitialX(), getPiece().color.homeRow()).setOccupant(swap);
+        board.square(rookTargetX(), getPiece().color.homeRow()).setOccupant(null);
         swap.setPosition(new Point(rookInitialX(), getPiece().color.homeRow()));
     }
 }

@@ -6,8 +6,10 @@
 package chess.ai.rules;
 
 import chess.chessboard.Board;
+import chess.chessboard.Square;
 import chess.chessboard.pieces.Pawn;
 import chess.chessboard.pieces.Piece;
+import java.awt.Point;
 
 /**
  * Positional rule which removes value from pawns that are on the same file.
@@ -30,7 +32,11 @@ public class DoubledPawns implements PositionalRule {
                 continue;
             }
 
-            Piece occupant = board.occupant(piece.position().x, rank);
+            Point w = piece.position();
+            Square x = board.square(w.x, rank);
+            Piece y = x.occupant();
+
+            Piece occupant = board.square(piece.position().x, rank).occupant();
             if (occupant != null && occupant instanceof Pawn && occupant.color == piece.color) {
                 return 1;
             }

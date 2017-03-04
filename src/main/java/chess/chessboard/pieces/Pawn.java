@@ -36,26 +36,6 @@ public class Pawn extends Piece {
     }
 
     /**
-     * Method which adds all relevant positional rules to this piece.
-     */
-    @Override
-    public void addPositionalRules() {
-        addPositionalRule(new DoubledPawns());
-        addPositionalRule(new PushedPawns());
-    }
-
-    /**
-     * Method which returns the material value for the piece, which is a number
-     * representing the worth of the type of piece.
-     *
-     * @return the material value of the piece
-     */
-    @Override
-    public double materialValue() {
-        return 1.0;
-    }
-
-    /**
      * Method which returns a list of valid moves for the Pawn. Pawns can move
      * only forward one square at a time, except for on the first move, on which
      * they can move two squares. Pawns cannot capture while moving forward,
@@ -77,6 +57,26 @@ public class Pawn extends Piece {
     }
 
     /**
+     * Method which adds all relevant positional rules to this piece.
+     */
+    @Override
+    public void addPositionalRules() {
+        addPositionalRule(new DoubledPawns());
+        addPositionalRule(new PushedPawns());
+    }
+
+    /**
+     * Method which returns the material value for the piece, which is a number
+     * representing the worth of the type of piece.
+     *
+     * @return the material value of the piece
+     */
+    @Override
+    public double materialValue() {
+        return 1.0;
+    }
+
+    /**
      * Method which returns a copy of the Piece.
      *
      * @return a copy of this Piece
@@ -84,6 +84,16 @@ public class Pawn extends Piece {
     @Override
     public Pawn copy() {
         return new Pawn(color, position().x, position().y);
+    }
+
+    /**
+     * Returns the character that represents this piece in a fen.
+     *
+     * @return the character that represents this piece in a fen
+     */
+    @Override
+    protected char fenChar() {
+        return 'p';
     }
 
     /**
@@ -119,7 +129,7 @@ public class Pawn extends Piece {
      * @param board the board on which the move will be made
      */
     private void addDoubleMove(List<GenericMove> toReturn, Board board) {
-        Piece blocker = board.occupant(position().x, position().y + color.forwardDirection().y());
+        Piece blocker = board.square(position().x, position().y + color.forwardDirection().y()).occupant();
         if (blocker == null && position().y == color.pawnRow()) {
             int addX = position().x;
             int addY = position().y + (2 * color.forwardDirection().y());
@@ -135,7 +145,7 @@ public class Pawn extends Piece {
      * @param board the board on which the move will be made
      */
     private void addEnPassant(List<GenericMove> toReturn, Board board) {
-        GenericMove lastMove = board.lastMove();
+        GenericMove lastMove = board.history().last();
         if (lastMove == null) {
             return;
         }

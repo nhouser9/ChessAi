@@ -61,7 +61,7 @@ public abstract class GenericMove {
             return false;
         }
 
-        Piece occupant = board.occupant(to.x, to.y);
+        Piece occupant = board.square(to.x, to.y).occupant();
 
         if (occupant == null) {
             return true;
@@ -108,7 +108,7 @@ public abstract class GenericMove {
      */
     public void changeBoard(Board newBoard) {
         board = newBoard;
-        piece = newBoard.occupant(piece.position().x, piece.position().y);
+        piece = newBoard.square(piece.position().x, piece.position().y).occupant();
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class GenericMove {
 
         updateBoard();
         board.passTurn();
-        board.addToHistory(this);
+        board.history().add(this);
         board.resetValidMoves();
         return true;
     }
@@ -138,13 +138,13 @@ public abstract class GenericMove {
      * @return true if the reversion succeeded, false otherwise
      */
     public boolean revert() {
-        if (board.lastMove() != this) {
+        if (board.history().last() != this) {
             return false;
         }
 
         revertBoard();
         board.passTurn();
-        board.removeLastMove();
+        board.history().undo();
         board.resetValidMoves();
         return true;
     }
@@ -155,8 +155,8 @@ public abstract class GenericMove {
      * to ensure special cases like en passant are handled.
      */
     private void updateBoard() {
-        board.setOccupant(from.x, from.y, null);
-        board.setOccupant(to.x, to.y, piece);
+        board.square(from.x, from.y).setOccupant(null);
+        board.square(to.x, to.y).setOccupant(piece);
         piece.setPosition(to);
         piece.addMoveCount();
         implementationExecute();
@@ -168,8 +168,8 @@ public abstract class GenericMove {
      * ensure special cases like en passant are handled.
      */
     private void revertBoard() {
-        board.setOccupant(to.x, to.y, null);
-        board.setOccupant(from.x, from.y, piece);
+        board.square(to.x, to.y).setOccupant(null);
+        board.square(from.x, from.y).setOccupant(piece);
         piece.setPosition(from);
         piece.subMoveCount();
         implementationRevert();

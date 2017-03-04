@@ -92,6 +92,16 @@ public class King extends Piece {
     }
 
     /**
+     * Returns the character that represents this piece in a fen.
+     *
+     * @return the character that represents this piece in a fen
+     */
+    @Override
+    protected char fenChar() {
+        return 'k';
+    }
+
+    /**
      * Method which checks whether the king is being threatened. This is used to
      * determine move validity.
      *
@@ -106,13 +116,13 @@ public class King extends Piece {
             for (int two : twos) {
                 Piece occupant;
                 if (Board.inBounds(position().x + one, position().y + two)) {
-                    occupant = board.occupant(position().x + one, position().y + two);
+                    occupant = board.square(position().x + one, position().y + two).occupant();
                     if (occupant != null && occupant instanceof Knight && occupant.color != color) {
                         return true;
                     }
                 }
                 if (Board.inBounds(position().x + two, position().y + one)) {
-                    occupant = board.occupant(position().x + two, position().y + one);
+                    occupant = board.square(position().x + two, position().y + one).occupant();
                     if (occupant != null && occupant instanceof Knight && occupant.color != color) {
                         return true;
                     }
@@ -126,7 +136,7 @@ public class King extends Piece {
             int row = position().y + direction.y();
 
             while (Board.inBounds(col, row)) {
-                Piece occupant = board.occupant(col, row);
+                Piece occupant = board.square(col, row).occupant();
                 if (occupant != null) {
                     if (occupant.color != color) {
                         if (occupant instanceof Queen) {
@@ -166,6 +176,43 @@ public class King extends Piece {
     }
 
     /**
+     * Method which checks if castling is still legal on the current board. This
+     * does not check whether castling is a valid move now, just checks whether
+     * it has been ruled out by a past move. For example, this would return true
+     * at the start of a game despite the fact that pieces are in the way of the
+     * castle.
+     *
+     * @param board the board on which the castle would be made
+     * @param direction the direction of the castle
+     * @return whether castling is still legal on the given board
+     */
+    public boolean castleStillLegal(Board board, Direction direction) {
+        if (direction != Direction.WEST && direction != Direction.EAST) {
+            throw new IllegalArgumentException("Tried to castle in a direction other than left or right.");
+        }
+
+        if (hasMoved() || position().x != 4 || position().y != color.homeRow()) {
+            return false;
+        }
+
+        Piece rookSquareOccupant = null;
+        switch (direction) {
+            case WEST:
+                rookSquareOccupant = board.square(0, position().y).occupant();
+                break;
+            case EAST:
+                rookSquareOccupant = board.square(7, position().y).occupant();
+                break;
+        }
+
+        if (rookSquareOccupant == null || rookSquareOccupant.hasMoved()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Method which checks whether the active player can castle, which should be
      * true only if neither the king nor the left rook has moved, the king is
      * not in check, and the space to the side of the king is not under threat,
@@ -177,22 +224,14 @@ public class King extends Piece {
      * @throws IllegalArgumentException if passed a direction not east or west
      */
     private boolean canCastle(Board board, Direction direction) {
-        if (direction != Direction.WEST && direction != Direction.EAST) {
-            throw new IllegalArgumentException("Tried to castle in a direction other than left or right.");
+        if (!castleStillLegal(board, direction)) {
+            return false;
         }
 
         int xIndex = 4;
-        if (position().x != xIndex || position().y != color.homeRow()) {
-            return false;
-        }
-
-        if (hasMoved()) {
-            return false;
-        }
-
         while (Board.inBounds(xIndex + (2 * direction.x()), 0)) {
             xIndex = xIndex + direction.x();
-            if (board.occupant(xIndex, color.homeRow()) != null) {
+            if (board.square(xIndex, color.homeRow()).occupant() != null) {
                 return false;
             }
         }
@@ -202,12 +241,6 @@ public class King extends Piece {
         }
 
         if (MoveFactory.create(board, this, position().x + direction.x(), position().y).endangersKing()) {
-            return false;
-        }
-
-        xIndex = xIndex + direction.x();
-        Piece rookSquareOccupant = board.occupant(xIndex, color.homeRow());
-        if (rookSquareOccupant == null || rookSquareOccupant.hasMoved()) {
             return false;
         }
 

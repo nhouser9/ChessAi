@@ -6,15 +6,17 @@ package chess;
  * and open the template in the editor.
  */
 /**
- * TODO threading AI move progress bar using opponent's clock perform deeper
- * analysis on selected moves? finish calculating capture lines? reuse old tree
- * cache allow user to promote into a rook enforce consistency between board /
- * piece position
+ * TODO threading, AI move progress bar, using opponent's clock, perform deeper
+ * analysis on selected moves?, finish calculating capture lines?, reuse old
+ * tree, cache, allow user to promote into a rook, enforce consistency between
+ * board / piece position, track defended and attacked pieces, convert points to
+ * squares
  */
 import chess.gui.AppWindow;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -30,6 +32,9 @@ import javafx.application.Application;
  */
 public class ChessEngine {
 
+    //the logging level to use
+    private static final Level LOG_LEVEL = Level.ALL;
+
     /**
      * @param args the command line arguments
      */
@@ -42,16 +47,25 @@ public class ChessEngine {
      * Method which sets up logging, including log files and custom format.
      */
     private static void setupLogger() {
-        Logger rootLogger = Logger.getLogger("chess");
+        Logger rootLogger = Logger.getLogger("");
+        rootLogger.setLevel(Level.OFF);
+        rootLogger.removeHandler(rootLogger.getHandlers()[0]);
+
+        Logger packageLogger = Logger.getLogger("chess");
+        packageLogger.setLevel(LOG_LEVEL);
         try {
             Handler fileLog = new FileHandler("chess.log");
             fileLog.setFormatter(new CustomFormatter());
-            fileLog.setLevel(Level.ALL);
-            rootLogger.addHandler(fileLog);
+            fileLog.setLevel(LOG_LEVEL);
+            packageLogger.addHandler(fileLog);
+
+            Handler consoleLog = new ConsoleHandler();
+            consoleLog.setFormatter(new CustomFormatter());
+            consoleLog.setLevel(LOG_LEVEL);
+            packageLogger.addHandler(consoleLog);
         } catch (IOException | SecurityException e) {
             e.printStackTrace();
         }
-        rootLogger.setLevel(Level.ALL);
     }
 
     /**

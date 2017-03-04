@@ -6,26 +6,33 @@
 package chess.chessboard.moves;
 
 import chess.chessboard.Board;
+import chess.chessboard.Square;
 import chess.chessboard.pieces.Piece;
 import java.awt.Point;
 
 /**
- * Class representing a normal move made from one space to another that impacts
- * no other pieces.
+ * Class representing an double move, which is a special move where a pawn moves
+ * two squares on its first move.
  *
  * @author Nick Houser
  */
-public class NormalMove extends GenericMove {
+public class InitialPawnMove extends GenericMove {
+
+    //the square that this move exposes to en passant
+    public final Square enPassantTarget;
 
     /**
-     * Constructor which calls the inherited constructor.
+     * Constructor which calls the inherited constructor before saving the en
+     * passant target.
      *
-     * @param board the game board on which the move will be made
-     * @param mover the Piece undertaking the move
-     * @param targetPosition the Point the mover is moving to
+     * @param board the board on which the move will be made
+     * @param mover the piece undergoing the move
+     * @param targetPosition the location the piece is moving to
      */
-    protected NormalMove(Board board, Piece mover, Point targetPosition) {
+    protected InitialPawnMove(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
+        int yBehindMove = targetPosition.y - mover.color.forwardDirection().y();
+        enPassantTarget = board.square(targetPosition.x, yBehindMove);
     }
 
     /**

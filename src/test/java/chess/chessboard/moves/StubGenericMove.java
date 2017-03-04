@@ -14,9 +14,9 @@ import java.awt.Point;
  *
  * @author Nick Houser
  */
-public class FakeGenericMove extends GenericMove {
+public class StubGenericMove extends GenericMove {
 
-    public FakeGenericMove(Board board, Piece mover, Point targetPosition) {
+    public StubGenericMove(Board board, Piece mover, Point targetPosition) {
         super(board, mover, targetPosition);
     }
 

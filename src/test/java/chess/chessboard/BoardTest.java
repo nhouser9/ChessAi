@@ -7,6 +7,7 @@ package chess.chessboard;
 
 import chess.chessboard.moves.GenericMove;
 import chess.chessboard.moves.MoveFactory;
+import chess.chessboard.pieces.Bishop;
 import chess.chessboard.pieces.King;
 import chess.chessboard.pieces.Pawn;
 import chess.chessboard.pieces.Piece;
@@ -17,8 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class BoardTest {
 
@@ -76,18 +75,18 @@ public class BoardTest {
         Board testBoard = new Board(Board.initialState(), Color.WHITE);
         List<GenericMove> moves = testBoard.validMoves();
         GenericMove toMake = moves.get(0);
-        assertTrue(testBoard.occupant(toMake.from.x, toMake.from.y) == toMake.getPiece());
+        assertTrue(testBoard.square(toMake.from.x, toMake.from.y).occupant() == toMake.getPiece());
         assertTrue(toMake.execute());
-        assertTrue(testBoard.occupant(toMake.to.x, toMake.to.y) == toMake.getPiece());
-        assertFalse(testBoard.occupant(toMake.from.x, toMake.from.y) == toMake.getPiece());
+        assertTrue(testBoard.square(toMake.to.x, toMake.to.y).occupant() == toMake.getPiece());
+        assertFalse(testBoard.square(toMake.from.x, toMake.from.y).occupant() == toMake.getPiece());
     }
 
     @Test
     public void move_preventsAnInvalidMove() {
         Board testBoard = new Board(Board.initialState(), Color.WHITE);
-        GenericMove toMake = MoveFactory.create(testBoard, testBoard.occupant(0, 0), 7, 7);
+        GenericMove toMake = MoveFactory.create(testBoard, testBoard.square(0, 0).occupant(), 7, 7);
         assertFalse(toMake.execute());
-        assertTrue(testBoard.occupant(0, 0) != null);
+        assertTrue(testBoard.square(0, 0).occupant() != null);
     }
 
     @Test
@@ -98,17 +97,6 @@ public class BoardTest {
         Point oldPos = toMake.getPiece().position();
         assertTrue(toMake.execute());
         assertFalse(toMake.getPiece().position() == oldPos);
-    }
-
-    @Test
-    public void lastMove_returnsTheLastMove() {
-        Board testBoard = new Board(Board.initialState(), Color.WHITE);
-        GenericMove move1 = testBoard.validMoves().get(3);
-        move1.execute();
-        assertTrue(testBoard.lastMove() == move1);
-        GenericMove move2 = testBoard.validMoves().get(5);
-        move2.execute();
-        assertTrue(testBoard.lastMove() == move2);
     }
 
     @Test
@@ -128,7 +116,7 @@ public class BoardTest {
         GenericMove enPassant = MoveFactory.create(testBoard, capturingPawn, captured.x, capturing.y + 1);
         enPassant.execute();
 
-        assertTrue(testBoard.occupant(capturedPawn.position().x, capturedPawn.position().y) == null);
+        assertTrue(testBoard.square(capturedPawn.position().x, capturedPawn.position().y).occupant() == null);
     }
 
     @Test
@@ -180,8 +168,8 @@ public class BoardTest {
         GenericMove castle = MoveFactory.create(testBoard, king, king.position().x + (2 * Direction.EAST.x()), king.position().y);
         castle.execute();
 
-        assertTrue(testBoard.occupant(rookLoc.x, rookLoc.y) == null);
-        assertTrue(testBoard.occupant(rookLoc.x + (2 * Direction.WEST.x()), rookLoc.y) == rook);
+        assertTrue(testBoard.square(rookLoc.x, rookLoc.y).occupant() == null);
+        assertTrue(testBoard.square(rookLoc.x + (2 * Direction.WEST.x()), rookLoc.y).occupant() == rook);
     }
 
     @Test
@@ -197,8 +185,8 @@ public class BoardTest {
         GenericMove castle = MoveFactory.create(testBoard, king, king.position().x + (2 * Direction.WEST.x()), king.position().y);
         castle.execute();
 
-        assertTrue(testBoard.occupant(rookLoc.x, rookLoc.y) == null);
-        assertTrue(testBoard.occupant(rookLoc.x + (3 * Direction.EAST.x()), rookLoc.y) == rook);
+        assertTrue(testBoard.square(rookLoc.x, rookLoc.y).occupant() == null);
+        assertTrue(testBoard.square(rookLoc.x + (3 * Direction.EAST.x()), rookLoc.y).occupant() == rook);
     }
 
     @Test
@@ -211,7 +199,7 @@ public class BoardTest {
         Point target = new Point(pawn.position().x, Color.WHITE.queenRow());
         MoveFactory.create(testBoard, pawn, target.x, target.y).execute();
 
-        assertTrue(testBoard.occupant(target.x, target.y) instanceof Queen);
+        assertTrue(testBoard.square(target.x, target.y).occupant() instanceof Queen);
     }
 
     @Test
@@ -237,8 +225,8 @@ public class BoardTest {
         move2.revert();
         move1.revert();
 
-        assertTrue(original.occupant(captured.x, captured.y) == capturedPawn);
-        assertTrue(original.occupant(attacking.x, attacking.y) == attackingPawn);
+        assertTrue(original.square(captured.x, captured.y).occupant() == capturedPawn);
+        assertTrue(original.square(attacking.x, attacking.y).occupant() == attackingPawn);
     }
 
     @Test
@@ -272,9 +260,9 @@ public class BoardTest {
         move2.revert();
         move1.revert();
 
-        assertTrue(original.occupant(throwawayPawnLoc.x, throwawayPawnLoc.y) == throwawayPawn);
-        assertTrue(original.occupant(blackPawnLoc.x, blackPawnLoc.y) == blackPawn);
-        assertTrue(original.occupant(whitePawnLoc.x, whitePawnLoc.y) == whitePawn);
+        assertTrue(original.square(throwawayPawnLoc.x, throwawayPawnLoc.y).occupant() == throwawayPawn);
+        assertTrue(original.square(blackPawnLoc.x, blackPawnLoc.y).occupant() == blackPawn);
+        assertTrue(original.square(whitePawnLoc.x, whitePawnLoc.y).occupant() == whitePawn);
     }
 
     @Test
@@ -298,9 +286,9 @@ public class BoardTest {
         move2.revert();
         move1.revert();
 
-        assertTrue(original.occupant(2, 2) == null);
-        assertTrue(original.occupant(blackPawnLoc.x, blackPawnLoc.y) == blackPawn);
-        assertTrue(original.occupant(whitePawnLoc.x, whitePawnLoc.y) == whitePawn);
+        assertTrue(original.square(2, 2).occupant() == null);
+        assertTrue(original.square(blackPawnLoc.x, blackPawnLoc.y).occupant() == blackPawn);
+        assertTrue(original.square(whitePawnLoc.x, whitePawnLoc.y).occupant() == whitePawn);
     }
 
     @Test
@@ -314,8 +302,8 @@ public class BoardTest {
 
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-                Piece originalOccupant = original.occupant(col, row);
-                Piece copyOccupant = copy.occupant(col, row);
+                Piece originalOccupant = original.square(col, row).occupant();
+                Piece copyOccupant = copy.square(col, row).occupant();
                 if (originalOccupant == null) {
                     assertTrue(copyOccupant == null);
                 } else {
@@ -336,8 +324,8 @@ public class BoardTest {
 
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-                Piece originalOccupant = original.occupant(col, row);
-                Piece copyOccupant = copy.occupant(col, row);
+                Piece originalOccupant = original.square(col, row).occupant();
+                Piece copyOccupant = copy.square(col, row).occupant();
                 if (originalOccupant == null) {
                     assertTrue(copyOccupant == null);
                 } else {

@@ -6,6 +6,7 @@
 package chess.chessboard;
 
 import chess.chessboard.moves.GenericMove;
+import chess.chessboard.notation.History;
 import chess.chessboard.pieces.Bishop;
 import chess.chessboard.pieces.King;
 import chess.chessboard.pieces.Knight;
@@ -97,11 +98,11 @@ public class Board {
     //the color whose turn it is
     private Color activePlayer;
 
-    //the move history
-    private Stack<GenericMove> moveHistory;
-    //the array of pieces on the board
+    //the move history of the board
+    private History history;
 
-    private Piece[][] pieces;
+    //the array of squares on the board
+    private Square[][] squares;
 
     //links to both kings for easy retrieval
     private Map<Color, King> kings;
@@ -138,25 +139,23 @@ public class Board {
     }
 
     /**
-     * Method which returns the occupant of the given position.
+     * Method which returns the square at the given position.
      *
      * @param xPosition the x position to check
      * @param yPosition the y position to check
-     * @return the Piece at the passed position
+     * @return the Square at the passed position
      */
-    public Piece occupant(int xPosition, int yPosition) {
-        return pieces[xPosition][yPosition];
+    public Square square(int xPosition, int yPosition) {
+        return squares[xPosition][yPosition];
     }
 
     /**
-     * Sets the occupant of the given position to the passed Piece.
+     * Method which returns the move history for this board.
      *
-     * @param xPosition the x position to set
-     * @param yPosition the y position to set
-     * @param occupant the Piece to set in the position
+     * @return the History object representing the past moves made on the board
      */
-    public void setOccupant(int xPosition, int yPosition, Piece occupant) {
-        pieces[xPosition][yPosition] = occupant;
+    public History history() {
+        return history;
     }
 
     /**
@@ -170,34 +169,6 @@ public class Board {
             return kings.get(color);
         }
         return null;
-    }
-
-    /**
-     * Method which returns a list of past moves made on the board.
-     *
-     * @return a list of past moves made on the board
-     */
-    public GenericMove lastMove() {
-        if (moveHistory.isEmpty()) {
-            return null;
-        }
-        return moveHistory.peek();
-    }
-
-    /**
-     * Method which removes the most recent item of move history.
-     */
-    public void removeLastMove() {
-        moveHistory.pop();
-    }
-
-    /**
-     * Method which adds a move to the move history.
-     *
-     * @param move the move to add
-     */
-    public void addToHistory(GenericMove move) {
-        moveHistory.add(move);
     }
 
     /**
@@ -230,7 +201,7 @@ public class Board {
         List<GenericMove> toReturn = new LinkedList<>();
         for (int col = 0; col < SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < SQUARES_PER_SIDE; row++) {
-                Piece occupant = occupant(col, row);
+                Piece occupant = square(col, row).occupant();
                 if (occupant == null || occupant.color != player) {
                     continue;
                 }
@@ -251,9 +222,14 @@ public class Board {
      * @param active the color whose turn it is
      */
     private void initializeFields(Color active) {
-        pieces = new Piece[SQUARES_PER_SIDE][SQUARES_PER_SIDE];
+        squares = new Square[SQUARES_PER_SIDE][SQUARES_PER_SIDE];
+        for (int col = 0; col < SQUARES_PER_SIDE; col++) {
+            for (int row = 0; row < SQUARES_PER_SIDE; row++) {
+                squares[col][row] = new Square(col, row);
+            }
+        }
         activePlayer = active;
-        moveHistory = new Stack<>();
+        history = new History();
         possibleMoves = null;
         kings = new HashMap<>();
     }
@@ -265,7 +241,7 @@ public class Board {
      */
     private void setupPieces(List<Piece> initialPieces) {
         for (Piece piece : initialPieces) {
-            pieces[piece.position().x][piece.position().y] = piece;
+            square(piece.position().x, piece.position().y).setOccupant(piece);
             if (piece instanceof King) {
                 kings.put(piece.color, (King) piece);
             }
@@ -282,7 +258,7 @@ public class Board {
 
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
             for (int row = 0; row < Board.SQUARES_PER_SIDE; row++) {
-                Piece occupant = occupant(col, row);
+                Piece occupant = square(col, row).occupant();
                 if (occupant != null) {
                     Piece copy = occupant.copyOf();
                     occupants.add(copy);

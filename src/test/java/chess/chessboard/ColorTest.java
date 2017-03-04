@@ -11,16 +11,18 @@ import static org.junit.Assert.*;
 public class ColorTest {
 
     @Test
-    public void bestOutcome_returnsTheLargerValue_forWhite() {
-        double larger = 1.2;
-        double smaller = .01;
-        assertTrue(Color.WHITE.bestOutcome(smaller, larger) == larger);
+    public void fenCase_returnsALowerCase_whenCalledOnBlack() {
+        char test = 'S';
+        char expected = 's';
+        char result = Color.BLACK.fenCase(test);
+        assertTrue(expected == result);
     }
 
     @Test
-    public void bestOutcome_returnsTheSmallerValue_forBlack() {
-        double larger = -1.2;
-        double smaller = -5.01;
-        assertTrue(Color.BLACK.bestOutcome(smaller, larger) == smaller);
+    public void fenCase_returnsAnUpperCase_whenCalledOnWhite() {
+        char test = 'x';
+        char expected = 'X';
+        char result = Color.WHITE.fenCase(test);
+        assertTrue(expected == result);
     }
 }

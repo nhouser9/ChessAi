@@ -68,7 +68,7 @@ public class BoardController {
      * @return the Piece at the given square
      */
     public Piece occupant(int x, int y) {
-        return board.occupant(x, y);
+        return board.square(x, y).occupant();
     }
 
     /**
@@ -85,7 +85,7 @@ public class BoardController {
      * Reverts the last move made and refreshes the board view.
      */
     public void revert() {
-        GenericMove lastMove = board.lastMove();
+        GenericMove lastMove = board.history().last();
 
         LOGGER.log(Level.INFO, "Reverting last move ({0})", lastMove);
 

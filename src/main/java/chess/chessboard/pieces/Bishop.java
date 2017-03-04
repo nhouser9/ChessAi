@@ -79,4 +79,14 @@ public class Bishop extends Piece {
     public Bishop copy() {
         return new Bishop(color, position().x, position().y);
     }
+
+    /**
+     * Returns the character that represents this piece in a fen.
+     *
+     * @return the character that represents this piece in a fen
+     */
+    @Override
+    protected char fenChar() {
+        return 'b';
+    }
 }

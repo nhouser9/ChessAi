@@ -8,6 +8,7 @@ package chess.chessboard.pieces;
 import chess.chessboard.Board;
 import chess.chessboard.Color;
 import chess.chessboard.Direction;
+import chess.chessboard.Square;
 import chess.chessboard.moves.GenericMove;
 import chess.chessboard.moves.MoveFactory;
 import java.awt.Point;
@@ -18,13 +19,15 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 
 public class PieceTest {
 
     @Test
     public void constructor_storesPassedColor() {
         Color initialColor = Color.BLACK;
-        Piece testPiece = new FakePiece(initialColor, 1, 1);
+        Piece testPiece = new StubPiece(initialColor, 1, 1);
         assertEquals(initialColor, testPiece.color);
     }
 
@@ -32,7 +35,7 @@ public class PieceTest {
     public void constructor_initializesPosition() {
         int testInitialX = 3;
         int testInitialY = 5;
-        Piece testPiece = new FakePiece(Color.WHITE, testInitialX, testInitialY);
+        Piece testPiece = new StubPiece(Color.WHITE, testInitialX, testInitialY);
         assertEquals(testPiece.position(), new Point(testInitialX, testInitialY));
     }
 
@@ -41,9 +44,11 @@ public class PieceTest {
         List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
-        Piece testPiece = new FakePiece(Color.BLACK, initialCol, initialRow);
+        Piece testPiece = new StubPiece(Color.BLACK, initialCol, initialRow);
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         for (Direction dir : Direction.values()) {
             potentialMoves.clear();
@@ -65,9 +70,11 @@ public class PieceTest {
         List<GenericMove> potentialMoves = new ArrayList<>();
         int initialCol = 4;
         int initialRow = 3;
-        Piece testPiece = new FakePiece(Color.BLACK, initialCol, initialRow);
+        Piece testPiece = new StubPiece(Color.BLACK, initialCol, initialRow);
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         potentialMoves.clear();
         testPiece.addDirectionalMoves(potentialMoves, fakeBoard, Direction.NORTH);
@@ -82,16 +89,22 @@ public class PieceTest {
         int initialCol = 4;
         int initialRow = 3;
         int blockerOffset = 2;
-        Piece testPiece = new FakePiece(Color.BLACK, initialCol, initialRow);
+        Piece testPiece = new StubPiece(Color.BLACK, initialCol, initialRow);
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         for (Direction dir : Direction.values()) {
             potentialMoves.clear();
             int blockerX = initialCol + (blockerOffset * dir.x());
             int blockerY = initialRow + (blockerOffset * dir.y());
-            Piece testBlocker = new FakePiece(Color.BLACK, blockerX, blockerY);
-            when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
+            Piece testBlocker = new StubPiece(Color.BLACK, blockerX, blockerY);
+
+            Square fakeOccupied = mock(Square.class);
+            when(fakeOccupied.occupant()).thenReturn(testBlocker);
+            when(fakeBoard.square(blockerX, blockerY)).thenReturn(fakeOccupied);
+
             testPiece.addDirectionalMoves(potentialMoves, fakeBoard, dir);
 
             int col = initialCol + dir.x();
@@ -119,16 +132,22 @@ public class PieceTest {
         int initialCol = 4;
         int initialRow = 3;
         int blockerOffset = 2;
-        Piece testPiece = new FakePiece(Color.BLACK, initialCol, initialRow);
+        Piece testPiece = new StubPiece(Color.BLACK, initialCol, initialRow);
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         for (Direction dir : Direction.values()) {
             potentialMoves.clear();
             int blockerX = initialCol + (blockerOffset * dir.x());
             int blockerY = initialRow + (blockerOffset * dir.y());
-            Piece testBlocker = new FakePiece(Color.WHITE, blockerX, blockerY);
-            when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
+            Piece testBlocker = new StubPiece(Color.WHITE, blockerX, blockerY);
+
+            Square fakeOccupied = mock(Square.class);
+            when(fakeOccupied.occupant()).thenReturn(testBlocker);
+            when(fakeBoard.square(blockerX, blockerY)).thenReturn(fakeOccupied);
+
             testPiece.addDirectionalMoves(potentialMoves, fakeBoard, dir);
 
             GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, blockerX, blockerY);
@@ -142,16 +161,22 @@ public class PieceTest {
         int initialCol = 4;
         int initialRow = 3;
         int blockerOffset = 2;
-        Piece testPiece = new FakePiece(Color.WHITE, initialCol, initialRow);
+        Piece testPiece = new StubPiece(Color.WHITE, initialCol, initialRow);
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         for (Direction dir : Direction.values()) {
             potentialMoves.clear();
             int blockerX = initialCol + (blockerOffset * dir.x());
             int blockerY = initialRow + (blockerOffset * dir.y());
-            Piece testBlocker = new FakePiece(Color.WHITE, blockerX, blockerY);
-            when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
+            Piece testBlocker = new StubPiece(Color.WHITE, blockerX, blockerY);
+
+            Square fakeOccupied = mock(Square.class);
+            when(fakeOccupied.occupant()).thenReturn(testBlocker);
+            when(fakeBoard.square(blockerX, blockerY)).thenReturn(fakeOccupied);
+
             testPiece.addDirectionalMoves(potentialMoves, fakeBoard, dir);
 
             GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, blockerX, blockerY);
@@ -163,7 +188,7 @@ public class PieceTest {
     public void addIfValid_doesNotAdd_whenTargetOutOfBounds() {
         List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
-        Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
+        Piece testPiece = new StubPiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE, 0);
         GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
         MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, true, true);
@@ -174,10 +199,14 @@ public class PieceTest {
     public void addIfValid_doesNotAdd_whenTargetOccupiedByFriend() {
         List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
-        Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
+        Piece testPiece = new StubPiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE, 0);
-        Piece blocker = new FakePiece(Color.BLACK, target.x, target.y);
-        when(fakeBoard.occupant(target.x, target.y)).thenReturn(blocker);
+        Piece blocker = new StubPiece(Color.BLACK, target.x, target.y);
+
+        Square fakeOccupied = mock(Square.class);
+        when(fakeOccupied.occupant()).thenReturn(blocker);
+        when(fakeBoard.square(target.x, target.y)).thenReturn(fakeOccupied);
+
         GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
         MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, true, true);
         assertFalse(potentialMoves.contains(testMove));
@@ -187,9 +216,12 @@ public class PieceTest {
     public void addIfValid_addsEmptyTarget_whenPassedEmptyFlag() {
         List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
-        Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
+        Piece testPiece = new StubPiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE - 1, 0);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
+
         GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
         MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, false, true);
         assertTrue(potentialMoves.contains(testMove));
@@ -199,9 +231,12 @@ public class PieceTest {
     public void addIfValid_doesNotAddEmptyTarget_whenNotPassedEmptyFlag() {
         List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
-        Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
+        Piece testPiece = new StubPiece(Color.BLACK, 4, 4);
         Point target = new Point(Board.SQUARES_PER_SIDE - 1, 0);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
+
         GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
         MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, false, false);
         assertFalse(potentialMoves.contains(testMove));
@@ -211,10 +246,14 @@ public class PieceTest {
     public void addIfValid_addsEnemyTarget_whenPassedEnemyFlag() {
         List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
-        Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
+        Piece testPiece = new StubPiece(Color.BLACK, 4, 4);
         Point target = new Point(0, 0);
-        Piece testEnemy = new FakePiece(Color.WHITE, target.x, target.y);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(testEnemy);
+        Piece testEnemy = new StubPiece(Color.WHITE, target.x, target.y);
+
+        Square fakeOccupied = mock(Square.class);
+        when(fakeOccupied.occupant()).thenReturn(testEnemy);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeOccupied);
+
         GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
         MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, true, false);
         assertTrue(potentialMoves.contains(testMove));
@@ -224,10 +263,14 @@ public class PieceTest {
     public void addIfValid_doesNotAddEnemyTarget_whenNotPassedEnemyFlag() {
         List<GenericMove> potentialMoves = new ArrayList<>();
         Board fakeBoard = mock(Board.class);
-        Piece testPiece = new FakePiece(Color.BLACK, 4, 4);
+        Piece testPiece = new StubPiece(Color.BLACK, 4, 4);
         Point target = new Point(0, 0);
-        Piece testEnemy = new FakePiece(Color.WHITE, target.x, target.y);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(testEnemy);
+        Piece testEnemy = new StubPiece(Color.WHITE, target.x, target.y);
+
+        Square fakeOccupied = mock(Square.class);
+        when(fakeOccupied.occupant()).thenReturn(testEnemy);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeOccupied);
+
         GenericMove testMove = MoveFactory.create(fakeBoard, testPiece, target.x, target.y);
         MoveFactory.addIfValid(potentialMoves, fakeBoard, testPiece, target.x, target.y, false, false);
         assertFalse(potentialMoves.contains(testMove));
@@ -235,50 +278,50 @@ public class PieceTest {
 
     @Test
     public void hasMoved_returnsFalseInitially() {
-        Piece testPiece = new FakePiece(Color.WHITE, 0, 0);
+        Piece testPiece = new StubPiece(Color.WHITE, 0, 0);
         assertFalse(testPiece.hasMoved());
     }
 
     @Test
     public void hasMoved_returnsTrue_afterMoved() {
-        Piece testPiece = new FakePiece(Color.WHITE, 0, 0);
+        Piece testPiece = new StubPiece(Color.WHITE, 0, 0);
         testPiece.addMoveCount();
         assertTrue(testPiece.hasMoved());
     }
 
     @Test
     public void equals_returnsFalse_whenClassesDoNotMatch() {
-        Piece testPiece = new FakePiece(Color.BLACK, 0, 0);
+        Piece testPiece = new StubPiece(Color.BLACK, 0, 0);
         String testOtherClass = "test";
         assertFalse(testPiece.equals(testOtherClass));
     }
 
     @Test
     public void equals_returnsFalse_whenMovedStatusDoesNotMatch() {
-        Piece testPiece = new FakePiece(Color.BLACK, 0, 0);
-        Piece testOther = new FakePiece(Color.BLACK, 0, 0);
+        Piece testPiece = new StubPiece(Color.BLACK, 0, 0);
+        Piece testOther = new StubPiece(Color.BLACK, 0, 0);
         testOther.addMoveCount();
         assertFalse(testPiece.equals(testOther));
     }
 
     @Test
     public void equals_returnsFalse_whenColorDoesNotMatch() {
-        Piece testPiece = new FakePiece(Color.BLACK, 0, 0);
-        Piece testOther = new FakePiece(Color.WHITE, 0, 0);
+        Piece testPiece = new StubPiece(Color.BLACK, 0, 0);
+        Piece testOther = new StubPiece(Color.WHITE, 0, 0);
         assertFalse(testPiece.equals(testOther));
     }
 
     @Test
     public void equals_returnsFalse_whenPositionDoesNotMatch() {
-        Piece testPiece = new FakePiece(Color.BLACK, 0, 0);
-        Piece testOther = new FakePiece(Color.BLACK, 1, 0);
+        Piece testPiece = new StubPiece(Color.BLACK, 0, 0);
+        Piece testOther = new StubPiece(Color.BLACK, 1, 0);
         assertFalse(testPiece.equals(testOther));
     }
 
     @Test
     public void equals_returnsTrue_forIdenticalObjects() {
-        Piece testPiece = new FakePiece(Color.BLACK, 0, 0);
-        Piece testOther = new FakePiece(Color.BLACK, 0, 0);
+        Piece testPiece = new StubPiece(Color.BLACK, 0, 0);
+        Piece testOther = new StubPiece(Color.BLACK, 0, 0);
         assertTrue(testPiece.equals(testOther));
     }
 

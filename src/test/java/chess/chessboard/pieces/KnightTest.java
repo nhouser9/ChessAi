@@ -7,6 +7,7 @@ package chess.chessboard.pieces;
 
 import chess.chessboard.Board;
 import chess.chessboard.Color;
+import chess.chessboard.Square;
 import chess.chessboard.moves.GenericMove;
 import chess.chessboard.moves.MoveFactory;
 import java.util.List;
@@ -15,6 +16,8 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 
 public class KnightTest {
 
@@ -25,7 +28,9 @@ public class KnightTest {
         Knight testKnight = new Knight(Color.WHITE, testInitialX, testInitialY);
 
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         List<GenericMove> moves = testKnight.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
@@ -47,7 +52,9 @@ public class KnightTest {
         Knight testKnight = new Knight(Color.WHITE, testInitialX, testInitialY);
 
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
 
         List<GenericMove> moves = testKnight.validMoves(fakeBoard);
         for (int col = 0; col < Board.SQUARES_PER_SIDE; col++) {
@@ -69,11 +76,15 @@ public class KnightTest {
         Knight testKnight = new Knight(Color.WHITE, testInitialX, testInitialY);
         int blockerX = testInitialX + 2;
         int blockerY = testInitialY + 1;
-        Piece testBlocker = new FakePiece(Color.WHITE, blockerX, blockerY);
+        Piece testBlocker = new StubPiece(Color.WHITE, blockerX, blockerY);
 
         Board fakeBoard = mock(Board.class);
-        when(fakeBoard.occupant(any(int.class), any(int.class))).thenReturn(null);
-        when(fakeBoard.occupant(blockerX, blockerY)).thenReturn(testBlocker);
+        Square fakeSquare = mock(Square.class);
+        when(fakeSquare.occupant()).thenReturn(null);
+        when(fakeBoard.square(any(int.class), any(int.class))).thenReturn(fakeSquare);
+        Square fakeOccupied = mock(Square.class);
+        when(fakeOccupied.occupant()).thenReturn(testBlocker);
+        when(fakeBoard.square(blockerX, blockerY)).thenReturn(fakeOccupied);
 
         GenericMove testMove = MoveFactory.create(fakeBoard, testKnight, blockerX, blockerY);
         List<GenericMove> moves = testKnight.validMoves(fakeBoard);
