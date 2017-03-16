@@ -10,7 +10,6 @@ import chess.chessboard.moves.Capture;
 import chess.chessboard.moves.GenericMove;
 import chess.chessboard.pieces.Pawn;
 import java.util.Stack;
-import javafx.util.Pair;
 
 /**
  *
