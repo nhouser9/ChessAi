@@ -5,7 +5,6 @@
  */
 package chess.gui;
 
-import chess.chessboard.Board;
 import chess.chessboard.pieces.Piece;
 import java.util.List;
 import javafx.scene.Group;
@@ -46,7 +45,7 @@ public class BoardSquare extends Group {
      * Method which asks this square to refresh its images to match the board
      * state.
      *
-     * @param board the board state to reflect
+     * @param occupant the piece on the square
      */
     public void refreshState(Piece occupant) {
         if (cachedPiece == occupant) {
